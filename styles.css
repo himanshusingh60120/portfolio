@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────
-   HIMANSHU SINGH · living ledger
+   HIMANSHU SINGH · living ledger · v2
    paper #F2F1E9 · ink #12140D · pine #175E3B · lime #CFF25E
 ────────────────────────────────────────────────────────── */
 
@@ -26,7 +26,6 @@ body{
   font-size:17px;
   line-height:1.6;
   overflow-x:hidden;
-  /* graph paper */
   background-image:
     linear-gradient(var(--rule-soft) 1px, transparent 1px),
     linear-gradient(90deg, var(--rule-soft) 1px, transparent 1px);
@@ -37,6 +36,11 @@ body{
 ::selection{background:var(--lime);color:var(--ink)}
 a{color:inherit;text-decoration:none}
 mark{background:var(--lime);padding:0 .18em;color:var(--ink)}
+kbd{
+  font-family:var(--mono);font-size:.9em;
+  border:1px solid var(--pine);padding:0 .35em;
+  border-bottom-width:2px;background:var(--paper);
+}
 
 :focus-visible{outline:3px solid var(--pine);outline-offset:3px}
 
@@ -108,6 +112,7 @@ body.has-pointer .cell-cursor{opacity:1}
   font-size:clamp(56px,11.5vw,168px);
   line-height:.94;letter-spacing:.01em;
   text-transform:uppercase;
+  cursor:default;
 }
 .hero-title .line{display:block}
 .hero-title em{
@@ -115,8 +120,9 @@ body.has-pointer .cell-cursor{opacity:1}
   background:var(--ink);padding:0 .08em;
   box-shadow:.12em .12em 0 var(--lime);
 }
+.scramble{white-space:pre}
 .hero-sub{
-  max-width:520px;margin-top:26px;font-size:18px;
+  max-width:540px;margin-top:26px;font-size:18px;
   font-weight:500;
 }
 
@@ -155,7 +161,7 @@ body.has-pointer .cell-cursor{opacity:1}
 
 .scroll-cue{
   position:absolute;left:var(--pad);bottom:24px;z-index:2;
-  font-size:11px;letter-spacing:.2em;color:var(--pine);
+  font-size:11px;letter-spacing:.14em;color:var(--pine);
   animation:bob 2.2s ease-in-out infinite;
 }
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
@@ -174,7 +180,9 @@ body.has-pointer .cell-cursor{opacity:1}
 .ticker-track span{
   font-family:var(--mono);font-size:13px;letter-spacing:.14em;
   padding:0 28px;position:relative;
+  transition:color .2s;
 }
+.ticker-track span:hover{color:var(--lime)}
 .ticker-track span::after{
   content:"·";position:absolute;right:-6px;color:var(--lime);
 }
@@ -182,16 +190,23 @@ body.has-pointer .cell-cursor{opacity:1}
 .ticker:hover .ticker-track{animation-play-state:paused}
 
 /* ── manifesto ───────────────────────────────────────── */
-.manifesto{padding:110px var(--pad) 90px;max-width:1200px}
+.manifesto{padding:110px var(--pad) 90px;max-width:1300px}
 .manifesto-line{
   font-size:clamp(24px,3.6vw,44px);
-  font-weight:600;line-height:1.3;max-width:20ch;
+  font-weight:600;line-height:1.3;max-width:24ch;
   margin-bottom:70px;
 }
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px;background:var(--rule)}
 .stat{background:var(--paper);padding:26px 24px;border-top:2px solid var(--ink)}
-.stat-num{display:block;font-size:clamp(40px,5vw,64px);font-weight:500;color:var(--pine);line-height:1}
-.stat-label{display:block;margin-top:10px;font-size:13px;max-width:26ch}
+.stat-num{display:block;font-size:clamp(36px,4.6vw,58px);font-weight:500;color:var(--pine);line-height:1}
+.stat-label{display:block;margin-top:10px;font-size:13px;max-width:28ch}
+.live-cells{color:var(--ink)}
+.live-cells::after{
+  content:"";display:inline-block;width:.5em;height:.9em;
+  background:var(--lime);margin-left:6px;vertical-align:-.08em;
+  animation:blink 1s steps(1) infinite;
+}
+@keyframes blink{50%{opacity:0}}
 
 /* ── section heads ───────────────────────────────────── */
 .section-head{
@@ -219,7 +234,7 @@ body.has-pointer .cell-cursor{opacity:1}
   transition:background .25s;
 }
 .project:last-of-type{border-bottom:1px solid var(--rule)}
-.project::before{ /* selected-row highlight */
+.project::before{
   content:"";position:absolute;inset:0;
   background:var(--lime);transform:scaleX(0);transform-origin:left;
   transition:transform .35s cubic-bezier(.65,0,.35,1);
@@ -241,11 +256,12 @@ body.has-pointer .cell-cursor{opacity:1}
 .project-hook{
   font-size:19px;font-weight:600;margin-top:8px;font-style:italic;
 }
-.project-body{max-width:640px;margin-top:12px;font-size:15.5px}
+.project-body{max-width:660px;margin-top:12px;font-size:15.5px}
 
 .pipeline{
   display:flex;flex-wrap:wrap;gap:8px;align-items:center;
   margin-top:20px;font-size:10.5px;letter-spacing:.1em;
+  position:relative;
 }
 .pipe-step{
   border:1px solid var(--ink);padding:5px 9px;background:var(--paper);
@@ -256,6 +272,24 @@ body.has-pointer .cell-cursor{opacity:1}
 .project:hover .pipe-step{background:var(--ink);color:var(--paper)}
 .project:hover .pipe-step.out{background:var(--pine);color:var(--lime)}
 .project:hover .pipe-step{transition-delay:calc(var(--i,0)*60ms)}
+
+/* packet dot travelling the pipeline on hover */
+.packet{
+  position:absolute;left:0;top:50%;width:8px;height:8px;
+  background:var(--pine);border-radius:50%;
+  transform:translate(-12px,-50%);opacity:0;
+  pointer-events:none;
+}
+.project:hover .packet{
+  opacity:1;
+  animation:travel 1.4s linear infinite;
+}
+@keyframes travel{
+  0%{left:0;opacity:0}
+  8%{opacity:1}
+  92%{opacity:1}
+  100%{left:100%;opacity:0}
+}
 
 .project-cta{
   align-self:center;justify-self:end;
@@ -286,9 +320,22 @@ body.has-pointer .cell-cursor{opacity:1}
 .xp-org{font-size:11px;letter-spacing:.16em;margin-top:6px}
 .xp-body{margin-top:14px;font-size:14.5px}
 
-/* ── stack sheet ─────────────────────────────────────── */
+/* ── stack: formula bar + sheet ──────────────────────── */
 .stack{padding:90px 0 60px}
-.stack-sheet{margin:0 var(--pad);border:1px solid var(--rule)}
+.stack-wrap{margin:0 var(--pad)}
+.formula-bar{
+  display:flex;align-items:center;gap:12px;
+  border:1px solid var(--ink);border-bottom:none;
+  background:var(--ink);color:var(--lime);
+  padding:10px 14px;font-size:12.5px;
+  min-height:42px;
+}
+.fx-badge{
+  font-style:italic;font-weight:500;
+  border:1px solid var(--lime);padding:0 7px;flex:none;
+}
+#fxOut{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stack-sheet{border:1px solid var(--rule)}
 .sheet-row{
   display:flex;flex-wrap:wrap;gap:8px;align-items:center;
   padding:14px 16px;border-bottom:1px solid var(--rule);
@@ -304,31 +351,61 @@ body.has-pointer .cell-cursor{opacity:1}
   transition:background .15s,color .15s,transform .15s;
   cursor:default;
 }
-.chip:hover{background:var(--lime);transform:translateY(-2px)}
+.chip:hover,.chip:focus-visible{background:var(--lime);transform:translateY(-2px)}
 
 /* ── garage ──────────────────────────────────────────── */
-.garage{padding:80px var(--pad)}
+.garage{padding:110px 0 80px}
+.garage-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:28px;
+  margin:0 var(--pad);
+}
 .garage-card{
-  display:grid;grid-template-columns:1.4fr 1fr;gap:30px;align-items:center;
+  display:grid;grid-template-rows:auto 1fr;gap:22px;
   border:2px solid var(--ink);background:var(--paper);
-  padding:44px;position:relative;overflow:hidden;
+  padding:38px;position:relative;overflow:hidden;
   box-shadow:10px 10px 0 var(--ink);
   transition:transform .25s,box-shadow .25s;
 }
-.garage-card:hover{transform:translate(-4px,-4px);box-shadow:14px 14px 0 var(--pine)}
-.garage-title{font-family:var(--display);text-transform:uppercase;font-size:clamp(36px,6vw,72px);line-height:.95;margin:10px 0 14px}
-.garage-body{max-width:46ch;margin-bottom:22px}
+a.garage-card:hover{transform:translate(-4px,-4px);box-shadow:14px 14px 0 var(--pine)}
+.garage-title{font-family:var(--display);text-transform:uppercase;font-size:clamp(32px,4.4vw,58px);line-height:.95;margin:10px 0 14px}
+.garage-body{max-width:46ch;margin-bottom:22px;font-size:15.5px}
 .garage .project-cta{display:inline-block}
-.car-svg{width:100%;max-width:340px;display:block;margin:0 auto}
-.garage-card:hover .car-svg{animation:vroom .6s ease}
+.car-svg,.tach-svg{width:100%;max-width:320px;display:block;margin:0 auto}
+a.garage-card:hover .car-svg{animation:vroom .6s ease}
 @keyframes vroom{0%{transform:translateX(0)}30%{transform:translateX(-14px)}100%{transform:translateX(0)}}
 .speedline{opacity:0;transition:opacity .2s}
-.garage-card:hover .speedline{opacity:1}
-@media (max-width:760px){.garage-card{grid-template-columns:1fr;padding:30px}}
+a.garage-card:hover .speedline{opacity:1}
+@media (max-width:860px){.garage-grid{grid-template-columns:1fr}.garage-card{padding:28px}}
+
+/* throttle + tach */
+.throttle{
+  font-family:var(--mono);font-size:13px;letter-spacing:.16em;
+  border:2px solid var(--ink);background:var(--lime);
+  padding:14px 22px;cursor:pointer;
+  box-shadow:4px 4px 0 var(--ink);
+  transition:transform .1s, box-shadow .1s, background .15s;
+  user-select:none;-webkit-user-select:none;touch-action:none;
+}
+.throttle:active,.throttle.revving{
+  transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink);
+  background:var(--pine);color:var(--lime);
+}
+.throttle-note{font-size:10.5px;color:var(--pine);margin-top:12px;font-style:italic}
+.rpm-text{font-family:var(--mono);font-size:13px;fill:var(--ink);letter-spacing:.08em}
+#needle line{transition:none}
+.bike-card.redline{animation:shake .12s linear infinite}
+.bike-card.redline .rpm-text{fill:var(--pine);font-weight:600}
+@keyframes shake{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(1.5px,-1px)}
+  50%{transform:translate(-1.5px,1px)}
+  75%{transform:translate(1px,1.5px)}
+  100%{transform:translate(-1px,-1.5px)}
+}
 
 /* ── contact ─────────────────────────────────────────── */
 .contact{
-  padding:130px var(--pad) 110px;
+  padding:130px var(--pad) 90px;
   border-top:2px solid var(--ink);
   background:var(--ink);color:var(--paper);
   background-image:
@@ -339,7 +416,7 @@ body.has-pointer .cell-cursor{opacity:1}
 .contact-eyebrow{font-size:12px;letter-spacing:.2em;color:var(--lime);margin-bottom:18px}
 .contact-title{
   font-family:var(--display);text-transform:uppercase;
-  font-size:clamp(64px,13vw,190px);line-height:.92;
+  font-size:clamp(52px,10.5vw,160px);line-height:.92;
   margin-bottom:56px;
 }
 .contact-links{display:flex;flex-direction:column;max-width:760px}
@@ -354,6 +431,7 @@ body.has-pointer .cell-cursor{opacity:1}
 .contact-key{font-size:11px;letter-spacing:.18em;color:var(--lime);width:90px;flex:none}
 .contact-val{font-size:clamp(16px,2.6vw,26px);font-weight:600;word-break:break-all}
 .contact-link .arrow{margin-left:auto;color:var(--lime);font-size:20px}
+.contact-ps{margin-top:34px;font-size:11.5px;letter-spacing:.08em;color:rgba(242,241,233,.6)}
 
 /* ── footer ──────────────────────────────────────────── */
 .footer{
@@ -374,4 +452,5 @@ body.has-pointer .cell-cursor{opacity:1}
   *,*::before,*::after{animation:none !important;transition:none !important}
   .reveal{opacity:1;transform:none}
   .ticker-track{transform:none}
+  .bike-card.redline{animation:none !important}
 }
