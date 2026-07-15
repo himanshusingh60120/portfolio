@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Himanshu Singh — I automate the boring parts</title>
-<meta name="description" content="Himanshu Singh — Business Analyst × GTM Engineer. I build internal tools that turn manual chaos into automated order. SQL, Python, Power BI, embeddings, and a lot of removed busywork." />
-<meta property="og:title" content="Himanshu Singh — I automate the boring parts" />
+<title>Himanshu Singh · I automate the boring parts</title>
+<meta name="description" content="Himanshu Singh, Business Analyst and GTM Engineer. I build internal tools that turn manual chaos into automated order. SQL, Python, Power BI, embeddings, and a large amount of deleted busywork." />
+<meta property="og:title" content="Himanshu Singh · I automate the boring parts" />
 <meta property="og:description" content="Business Analyst × GTM Engineer. Internal tools, RevOps automation, and pipelines that run themselves." />
 <meta property="og:type" content="website" />
 
@@ -23,7 +23,7 @@
 
 <!-- ── top bar ───────────────────────────────────────────── -->
 <header class="topbar">
-  <a class="logo" href="#top" aria-label="Himanshu Singh — home">
+  <a class="logo" href="#top" aria-label="Himanshu Singh, home">
     <span class="logo-mark">HS</span>
     <span class="logo-sub">himanshu&nbsp;singh</span>
   </a>
@@ -47,17 +47,18 @@
   <canvas id="field" aria-hidden="true"></canvas>
 
   <div class="hero-inner">
-    <p class="eyebrow mono reveal">Himanshu Singh — Business Analyst × GTM Engineer · Pune, IN</p>
+    <p class="eyebrow mono reveal">Himanshu Singh · Business Analyst × GTM Engineer · Pune, IN</p>
 
-    <h1 class="hero-title">
-      <span class="line reveal">I AUTOMATE</span>
-      <span class="line reveal">THE <em>BORING</em></span>
-      <span class="line reveal">PARTS.</span>
+    <h1 class="hero-title" id="heroTitle">
+      <span class="line reveal"><span class="scramble" data-text="I AUTOMATE">I AUTOMATE</span></span>
+      <span class="line reveal"><span class="scramble" data-text="THE ">THE </span><em><span class="scramble" data-text="BORING">BORING</span></em></span>
+      <span class="line reveal"><span class="scramble" data-text="PARTS.">PARTS.</span></span>
     </h1>
 
     <p class="hero-sub reveal">
-      Dashboards, pipelines, and internal tools that quietly remove busywork from
-      sales, ops, and product teams — so the numbers arrive before anyone has to ask.
+      Business analyst by title, GTM engineer by habit. I build the internal tools
+      that make reports show up before anyone asks, emails write themselves, and
+      sales teams look mildly psychic.
     </p>
 
     <!-- the signature switch -->
@@ -67,7 +68,7 @@
         <span class="knob"></span>
       </button>
       <span class="mode-label mono" id="labelAuto">AUTOMATED</span>
-      <span class="mode-hint mono">← flip me. it’s what I do all day</span>
+      <span class="mode-hint mono">flip me. or press <kbd>A</kbd>. I refuse to make you work for it</span>
     </div>
   </div>
 
@@ -77,7 +78,7 @@
     <div class="console-body" id="consoleBody"></div>
   </div>
 
-  <div class="scroll-cue mono" aria-hidden="true">SCROLL ↓</div>
+  <div class="scroll-cue mono" aria-hidden="true">SCROLL ↓ · the last manual step on this page</div>
 </section>
 
 <!-- ── ticker ────────────────────────────────────────────── -->
@@ -91,21 +92,25 @@
 <!-- ── manifesto / numbers ───────────────────────────────── -->
 <section class="manifesto">
   <p class="manifesto-line reveal">
-    Every team has a spreadsheet someone updates by hand at 6pm.
-    <mark>I find that spreadsheet</mark> — and teach it to update itself.
+    Every company has a spreadsheet that someone updates by hand at 6pm on a Friday.
+    <mark>I find that spreadsheet.</mark> I free that someone.
   </p>
   <div class="stats">
     <div class="stat reveal">
       <span class="stat-num mono" data-count="3000" data-suffix="+">0</span>
-      <span class="stat-label">reports matched to prospects by one tool</span>
+      <span class="stat-label">reports one of my tools has matched to prospects. It does not get tired.</span>
     </div>
     <div class="stat reveal">
       <span class="stat-num mono" data-count="4">0</span>
-      <span class="stat-label">personalized emails per prospect, zero hands on keyboard</span>
+      <span class="stat-label">personalized emails per prospect, written while everyone was still in standup</span>
     </div>
     <div class="stat reveal">
       <span class="stat-num mono" data-count="55" data-suffix="%">0</span>
-      <span class="stat-label">event reach lift, leading digital for TechFiesta</span>
+      <span class="stat-label">reach lift running digital for TechFiesta. Measured, not vibes.</span>
+    </div>
+    <div class="stat reveal">
+      <span class="stat-num mono live-cells" id="liveCells">0</span>
+      <span class="stat-label">cells auto-filled since you opened this page. Yes, right now. Keep scrolling.</span>
     </div>
   </div>
 </section>
@@ -114,7 +119,7 @@
 <section class="work" id="work">
   <div class="section-head">
     <h2 class="section-title"><span>SELECTED</span> <span>WORK</span></h2>
-    <p class="section-note mono">04 tools · all live · click any row to open the real thing</p>
+    <p class="section-note mono">04 tools · all live · click a row and use the real thing, not a screenshot</p>
   </div>
 
   <!-- 01 · Kings Cadence -->
@@ -125,10 +130,11 @@
       <h3 class="project-title">KINGS CADENCE</h3>
       <p class="project-hook">Cold email, minus the cold sweat.</p>
       <p class="project-body">
-        Reads a sheet of prospects, screens each company for real news — mergers, expansions,
-        new regulation — matches them to the most relevant report in the research catalog with
-        embeddings + GPT reranking, then writes four personalized advisory emails straight back
-        into the sheet. The sales team wakes up to a finished cadence.
+        Reads a sheet of prospects, checks what each company has actually been up to
+        (mergers, expansions, new regulation), pairs them with the most relevant report
+        in the catalog via embeddings and GPT reranking, then writes four personalized
+        advisory emails straight back into the sheet. The sales team wakes up to a
+        finished cadence and takes the credit. I'm at peace with this.
       </p>
       <div class="pipeline mono" aria-hidden="true">
         <span class="pipe-step">SHEET</span><span class="pipe-arrow">→</span>
@@ -136,6 +142,7 @@
         <span class="pipe-step">EMBED + RERANK</span><span class="pipe-arrow">→</span>
         <span class="pipe-step">4 EMAILS</span><span class="pipe-arrow">→</span>
         <span class="pipe-step out">BACK TO SHEET ✓</span>
+        <span class="packet" aria-hidden="true"></span>
       </div>
     </div>
     <div class="project-cta mono">OPEN LIVE TOOL <span class="arrow">↗</span></div>
@@ -147,12 +154,13 @@
     <div class="project-main">
       <div class="project-tags mono">EMBEDDINGS · GPT RERANK · 3,000+ REPORT CATALOG</div>
       <h3 class="project-title">REPORT MAPPER</h3>
-      <p class="project-hook">3,000 reports. One right match per lead.</p>
+      <p class="project-hook">3,000 reports. One right answer per lead.</p>
       <p class="project-body">
         Takes a raw B2B prospect list and pairs every lead with the single most relevant
-        market-research report — embedding shortlist first, GPT reranking on top. It even
-        checks whether the lead still works where the list says they do, and if they've
-        moved companies, it quietly rematches them to the new employer.
+        market-research report: embedding shortlist first, GPT reranking on top. It also
+        checks whether the lead still works where the list claims they do. People change
+        jobs constantly. This tool holds a grudge against stale data, finds the new
+        employer, and quietly rematches.
       </p>
       <div class="pipeline mono" aria-hidden="true">
         <span class="pipe-step">PROSPECT LIST</span><span class="pipe-arrow">→</span>
@@ -160,6 +168,7 @@
         <span class="pipe-step">RERANK</span><span class="pipe-arrow">→</span>
         <span class="pipe-step">STILL EMPLOYED?</span><span class="pipe-arrow">→</span>
         <span class="pipe-step out">MATCH ✓</span>
+        <span class="packet" aria-hidden="true"></span>
       </div>
     </div>
     <div class="project-cta mono">OPEN LIVE TOOL <span class="arrow">↗</span></div>
@@ -173,16 +182,18 @@
       <h3 class="project-title">RANKING ANALYSER</h3>
       <p class="project-hook">An X-ray machine for search rankings.</p>
       <p class="project-body">
-        Scans a page head to toe, auto-pulls the matching page from each fixed competitor,
-        and reads back the weighted reasons they outrank you — depth, schema, in-content
-        links, E-E-A-T, AI-overview coverage. A bulk mode enriches an entire CSV of URLs
-        with rank, CTR, impressions and clicks pulled straight from Search Console.
+        Scans a page head to toe, auto-pulls the matching page from each competitor,
+        and reads back exactly why they outrank you: depth, schema, in-content links,
+        E-E-A-T, AI-overview coverage. With weights. Not "content is king" hand-waving,
+        actual numbers. A bulk mode enriches an entire CSV of URLs with rank, CTR,
+        impressions and clicks pulled straight from Search Console.
       </p>
       <div class="pipeline mono" aria-hidden="true">
         <span class="pipe-step">YOUR URL</span><span class="pipe-arrow">→</span>
         <span class="pipe-step">PULL COMPETITORS</span><span class="pipe-arrow">→</span>
         <span class="pipe-step">WEIGHTED DIAGNOSIS</span><span class="pipe-arrow">→</span>
         <span class="pipe-step out">WHY THEY WIN ✓</span>
+        <span class="packet" aria-hidden="true"></span>
       </div>
     </div>
     <div class="project-cta mono">OPEN LIVE TOOL <span class="arrow">↗</span></div>
@@ -197,15 +208,17 @@
       <p class="project-hook">Internal links that place themselves.</p>
       <p class="project-body">
         Generates contextual internal-link suggestions across an entire content library
-        using the OpenAI API — no more hand-hunting for anchor text. Deployed serverless
-        on Vercel with a strict frontend/backend split, so the API key never touches the
-        browser. Built for Kings Research, used on real content.
+        using the OpenAI API, so nobody spends an afternoon hunting for anchor text ever
+        again. Deployed serverless on Vercel with a strict frontend/backend split: the
+        API key never touches the browser, because "we got scraped" is not a fun thing
+        to say in standup. Built for Kings Research, running on real content.
       </p>
       <div class="pipeline mono" aria-hidden="true">
         <span class="pipe-step">CONTENT LIBRARY</span><span class="pipe-arrow">→</span>
         <span class="pipe-step">CONTEXT SCAN</span><span class="pipe-arrow">→</span>
         <span class="pipe-step">SUGGEST LINKS</span><span class="pipe-arrow">→</span>
         <span class="pipe-step out">INTERLINKED ✓</span>
+        <span class="packet" aria-hidden="true"></span>
       </div>
     </div>
     <div class="project-cta mono">OPEN LIVE TOOL <span class="arrow">↗</span></div>
@@ -216,43 +229,44 @@
 <section class="experience" id="experience">
   <div class="section-head">
     <h2 class="section-title"><span>WHERE I’VE</span> <span>SHIPPED</span></h2>
-    <p class="section-note mono">promoted once · still shipping</p>
+    <p class="section-note mono">promoted mid-story · plot still developing</p>
   </div>
 
   <div class="xp-grid">
     <article class="xp reveal">
-      <div class="xp-when mono">FEB 2026 — NOW</div>
+      <div class="xp-when mono">FEB 2026 → NOW</div>
       <h3 class="xp-role">Technology Analyst</h3>
       <div class="xp-org mono">KINGS GLOBAL VENTURES</div>
       <p class="xp-body">
-        Promoted from intern to full-time, now working across multiple business functions
-        and portfolio companies. I design and deploy internal automation — Python plus
-        Postman-driven API integrations — that cuts repetitive workflows out of reporting,
-        data validation, and reconciliation. Effectively the in-house GTM engineer:
-        requirements in, working tool out.
+        Interned well enough that they made it permanent. Now I work across multiple
+        business functions and portfolio companies, shipping Python and Postman-driven
+        automations that cut the repetitive parts out of reporting, validation, and
+        reconciliation. Requirements go in, a working tool comes out, and a manual
+        workflow quietly disappears. Nobody mourns it.
       </p>
     </article>
 
     <article class="xp reveal">
-      <div class="xp-when mono">JUL 2025 — FEB 2026</div>
+      <div class="xp-when mono">JUL 2025 → FEB 2026</div>
       <h3 class="xp-role">Business Analyst Intern</h3>
       <div class="xp-org mono">KINGS RESEARCH</div>
       <p class="xp-body">
-        Built interactive Excel and Power BI dashboards tracking business and stakeholder
-        metrics, ran reporting cadences across teams, and worked hands-on in a RevOps
-        capacity on revenue workflows — plus the Agile ritual work: sprint planning,
-        backlog grooming, and Jira hygiene.
+        Built Excel and Power BI dashboards that stakeholders actually opened, ran
+        reporting cadences across teams, and worked hands-on in a RevOps capacity on
+        revenue workflows. Also did the full Agile liturgy: sprint planning, backlog
+        grooming, and keeping Jira honest, which is a job in itself.
       </p>
     </article>
 
     <article class="xp reveal">
-      <div class="xp-when mono">2021 — 2025</div>
+      <div class="xp-when mono">2021 → 2025</div>
       <h3 class="xp-role">B.E. Computer Engineering</h3>
       <div class="xp-org mono">NMIET, PUNE</div>
       <p class="xp-body">
-        Also served as Social Media Head — ran the college's digital presence and led
-        broadcasting for the national-level TechFiesta, lifting event reach by up to 55%.
-        Certified in SQL (LeetCode SQL 50) and Postman API Fundamentals.
+        Studied computer engineering by day, ran the college's entire social presence
+        the rest of the time. Led digital broadcasting for the national-level TechFiesta
+        and lifted event reach by 55%, which taught me distribution before I knew the
+        word GTM. Certified in SQL (LeetCode SQL 50) and Postman API Fundamentals.
       </p>
     </article>
   </div>
@@ -262,58 +276,126 @@
 <section class="stack" id="stack">
   <div class="section-head">
     <h2 class="section-title"><span>THE</span> <span>TOOLKIT</span></h2>
-    <p class="section-note mono">hover a cell · everything here has shipped something</p>
+    <p class="section-note mono">hover a cell · the formula bar audits me honestly</p>
   </div>
 
-  <div class="stack-sheet mono reveal" role="list">
-    <div class="sheet-row"><span class="sheet-key">A</span>
-      <span class="chip" role="listitem">SQL</span><span class="chip">Python</span><span class="chip">ETL</span><span class="chip">Query Optimization</span><span class="chip">Google Colab</span>
+  <div class="stack-wrap reveal">
+    <div class="formula-bar mono" aria-live="polite">
+      <span class="fx-badge">fx</span>
+      <span id="fxOut">hover a skill to run the audit</span>
     </div>
-    <div class="sheet-row"><span class="sheet-key">B</span>
-      <span class="chip">Power BI</span><span class="chip">MS Excel</span><span class="chip">Data Visualization</span><span class="chip">Dashboards</span>
-    </div>
-    <div class="sheet-row"><span class="sheet-key">C</span>
-      <span class="chip">OpenAI API</span><span class="chip">Embeddings</span><span class="chip">GPT Reranking</span><span class="chip">Google Sheets API</span><span class="chip">Postman</span>
-    </div>
-    <div class="sheet-row"><span class="sheet-key">D</span>
-      <span class="chip">Agile</span><span class="chip">Jira</span><span class="chip">Sprint Planning</span><span class="chip">Requirement Gathering</span><span class="chip">Stakeholder Mgmt</span>
-    </div>
-    <div class="sheet-row"><span class="sheet-key">E</span>
-      <span class="chip">Git</span><span class="chip">Vercel</span><span class="chip">Workflow Automation</span><span class="chip">GTM Engineering</span>
+    <div class="stack-sheet mono" role="list">
+      <div class="sheet-row"><span class="sheet-key">A</span>
+        <span class="chip" tabindex="0" data-fx='=VERIFY("LeetCode SQL 50") → TRUE, no ChatGPT tab open'>SQL</span>
+        <span class="chip" tabindex="0" data-fx='=AUTOMATE(everything_repetitive) → 4 shipped tools'>Python</span>
+        <span class="chip" tabindex="0" data-fx='=EXTRACT(chaos) → TRANSFORM(order) → LOAD(peace)'>ETL</span>
+        <span class="chip" tabindex="0" data-fx='=OPTIMIZE(query) → same answer, fewer regrets'>Query Optimization</span>
+        <span class="chip" tabindex="0" data-fx='=NOTEBOOK(free_gpu) → prototypes on a budget'>Google Colab</span>
+      </div>
+      <div class="sheet-row"><span class="sheet-key">B</span>
+        <span class="chip" tabindex="0" data-fx='=DASHBOARD(metrics) → stakeholders stop asking "any update?"'>Power BI</span>
+        <span class="chip" tabindex="0" data-fx='=THE_OG(analysis_tools) → still undefeated'>MS Excel</span>
+        <span class="chip" tabindex="0" data-fx='=CHART(data) → the meeting ends 20 min early'>Data Visualization</span>
+        <span class="chip" tabindex="0" data-fx='=REFRESH(auto) → reports before anyone asks'>Dashboards</span>
+      </div>
+      <div class="sheet-row"><span class="sheet-key">C</span>
+        <span class="chip" tabindex="0" data-fx='=RERANK(matches) → the one right report'>OpenAI API</span>
+        <span class="chip" tabindex="0" data-fx='=SIMILARITY(prospect, 3000_reports) → 0.94'>Embeddings</span>
+        <span class="chip" tabindex="0" data-fx='=JUDGE(shortlist) → better than keyword search, always'>GPT Reranking</span>
+        <span class="chip" tabindex="0" data-fx='=READ(sheet) + WRITE(sheet) → the sheet is the app'>Google Sheets API</span>
+        <span class="chip" tabindex="0" data-fx='=TEST(endpoint) → certified, twice'>Postman</span>
+      </div>
+      <div class="sheet-row"><span class="sheet-key">D</span>
+        <span class="chip" tabindex="0" data-fx='=SPRINT(2_weeks) → shipped, not "in progress"'>Agile</span>
+        <span class="chip" tabindex="0" data-fx='=GROOM(backlog) → tickets that make sense'>Jira</span>
+        <span class="chip" tabindex="0" data-fx='=PLAN(sprint) → scope that survives contact with reality'>Sprint Planning</span>
+        <span class="chip" tabindex="0" data-fx='=ASK(right_questions) → the tool people wanted'>Requirement Gathering</span>
+        <span class="chip" tabindex="0" data-fx='=TRANSLATE(business ↔ engineering) → both sides nod'>Stakeholder Mgmt</span>
+      </div>
+      <div class="sheet-row"><span class="sheet-key">E</span>
+        <span class="chip" tabindex="0" data-fx='=COMMIT(often) → messages you can actually read'>Git</span>
+        <span class="chip" tabindex="0" data-fx='=DEPLOY(main) → live before the meeting ends'>Vercel</span>
+        <span class="chip" tabindex="0" data-fx='=DELETE(busywork) → my whole personality'>Workflow Automation</span>
+        <span class="chip" tabindex="0" data-fx='=BUILD(internal_tools) → sales looks psychic'>GTM Engineering</span>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- ── GARAGE ────────────────────────────────────────────── -->
 <section class="garage" id="garage">
-  <a class="garage-card reveal" href="https://myhotwheelcollection.vercel.app/" target="_blank" rel="noopener noreferrer">
-    <div class="garage-text">
-      <div class="project-tags mono">OFF THE CLOCK · SIDE QUEST</div>
-      <h2 class="garage-title">THE 1:64 GARAGE</h2>
-      <p class="garage-body">
-        I collect Hot Wheels. And because I am who I am, the collection has its own
-        database, its own site, and probably better data hygiene than most CRMs.
-      </p>
-      <div class="project-cta mono">VISIT THE GARAGE <span class="arrow">↗</span></div>
+  <div class="section-head">
+    <h2 class="section-title"><span>THE</span> <span>GARAGE</span></h2>
+    <p class="section-note mono">two scales · one owner · zero automation allowed past this point</p>
+  </div>
+
+  <div class="garage-grid">
+
+    <!-- 1:1 · motorbike -->
+    <div class="garage-card bike-card reveal" id="bikeCard">
+      <div class="garage-text">
+        <div class="project-tags mono">1:1 SCALE · REAL HORSEPOWER</div>
+        <h3 class="garage-title">THE RIDE</h3>
+        <p class="garage-body">
+          When the pipelines run themselves, I don't sit around watching logs. Two
+          wheels, an open road, phone on Do Not Disturb. Riding is the one workflow
+          I will never optimize: the inefficiency is the entire point.
+        </p>
+        <button class="throttle mono" id="throttle" aria-label="Hold to rev the engine">
+          HOLD TO REV
+        </button>
+        <p class="throttle-note mono">no audio. your speakers are safe. your scroll position is not.</p>
+      </div>
+      <div class="garage-art" aria-hidden="true">
+        <svg viewBox="0 0 220 130" class="tach-svg" id="tachSvg">
+          <!-- dial -->
+          <path d="M25 110 A 85 85 0 1 1 195 110" fill="none" stroke="var(--ink)" stroke-width="3"/>
+          <!-- redline arc -->
+          <path d="M158 40 A 85 85 0 0 1 195 110" fill="none" stroke="var(--pine)" stroke-width="7" class="redline-arc"/>
+          <!-- ticks -->
+          <g stroke="var(--ink)" stroke-width="2" id="ticks"></g>
+          <!-- needle -->
+          <g id="needle" style="transform-origin:110px 110px">
+            <line x1="110" y1="110" x2="110" y2="34" stroke="var(--pine)" stroke-width="4" stroke-linecap="round"/>
+          </g>
+          <circle cx="110" cy="110" r="8" fill="var(--ink)"/>
+          <text x="110" y="128" text-anchor="middle" class="rpm-text" id="rpmText">0 RPM</text>
+        </svg>
+      </div>
     </div>
-    <div class="garage-art" aria-hidden="true">
-      <svg viewBox="0 0 220 110" class="car-svg">
-        <path d="M20 78 Q30 52 62 48 L86 46 Q104 26 134 26 L152 26 Q176 26 190 50 L204 54 Q212 58 212 68 L212 78 Z" fill="var(--ink)"/>
-        <path d="M92 46 Q106 32 132 32 L148 32 Q160 32 168 44 L120 46 Z" fill="var(--lime)"/>
-        <circle cx="66" cy="80" r="15" fill="var(--ink)" stroke="var(--paper)" stroke-width="4"/>
-        <circle cx="66" cy="80" r="5" fill="var(--lime)"/>
-        <circle cx="172" cy="80" r="15" fill="var(--ink)" stroke="var(--paper)" stroke-width="4"/>
-        <circle cx="172" cy="80" r="5" fill="var(--lime)"/>
-        <path class="speedline" d="M4 56 L34 56 M0 66 L26 66 M6 46 L30 46" stroke="var(--pine)" stroke-width="3" stroke-linecap="round"/>
-      </svg>
-    </div>
-  </a>
+
+    <!-- 1:64 · hot wheels -->
+    <a class="garage-card reveal" href="https://myhotwheelcollection.vercel.app/" target="_blank" rel="noopener noreferrer">
+      <div class="garage-text">
+        <div class="project-tags mono">1:64 SCALE · ZERO HORSEPOWER</div>
+        <h3 class="garage-title">THE HOT WHEELS</h3>
+        <p class="garage-body">
+          I also collect the small ones. And because I am who I am, the collection has
+          its own database, its own website, and honestly better data hygiene than most
+          CRMs I've been given access to.
+        </p>
+        <div class="project-cta mono">VISIT THE 1:64 GARAGE <span class="arrow">↗</span></div>
+      </div>
+      <div class="garage-art" aria-hidden="true">
+        <svg viewBox="0 0 220 110" class="car-svg">
+          <path d="M20 78 Q30 52 62 48 L86 46 Q104 26 134 26 L152 26 Q176 26 190 50 L204 54 Q212 58 212 68 L212 78 Z" fill="var(--ink)"/>
+          <path d="M92 46 Q106 32 132 32 L148 32 Q160 32 168 44 L120 46 Z" fill="var(--lime)"/>
+          <circle cx="66" cy="80" r="15" fill="var(--ink)" stroke="var(--paper)" stroke-width="4"/>
+          <circle cx="66" cy="80" r="5" fill="var(--lime)"/>
+          <circle cx="172" cy="80" r="15" fill="var(--ink)" stroke="var(--paper)" stroke-width="4"/>
+          <circle cx="172" cy="80" r="5" fill="var(--lime)"/>
+          <path class="speedline" d="M4 56 L34 56 M0 66 L26 66 M6 46 L30 46" stroke="var(--pine)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </a>
+
+  </div>
 </section>
 
 <!-- ── CONTACT ───────────────────────────────────────────── -->
 <section class="contact" id="contact">
-  <p class="contact-eyebrow mono reveal">GOT A SPREADSHEET SOMEONE UPDATES BY HAND?</p>
-  <h2 class="contact-title reveal">LET’S FIX<br/>THAT.</h2>
+  <p class="contact-eyebrow mono reveal">GOT A SPREADSHEET SOMEONE UPDATES BY HAND AT 6PM?</p>
+  <h2 class="contact-title reveal">LET’S FREE<br/>THAT SOMEONE.</h2>
   <div class="contact-links reveal">
     <a class="contact-link" href="mailto:himanshusingh60120@gmail.com">
       <span class="mono contact-key">EMAIL</span>
@@ -326,14 +408,15 @@
       <span class="arrow">↗</span>
     </a>
   </div>
+  <p class="contact-ps mono reveal">replies faster than a VLOOKUP. exact match, not approximate.</p>
 </section>
 
 </main>
 
 <footer class="footer mono">
   <span>© 2026 HIMANSHU SINGH</span>
-  <span>PUNE, IN · UTC+5:30</span>
-  <span>BUILT BY HAND · SO YOU DON’T HAVE TO WORK BY HAND</span>
+  <span id="puneClock">PUNE, IN · --:--:-- IST</span>
+  <span>BUILT BY HAND, SO YOU DON’T HAVE TO WORK BY HAND</span>
 </footer>
 
 <script type="importmap">
