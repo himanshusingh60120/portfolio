@@ -40,14 +40,28 @@ function initField() {
     }
 
     /* ORDER: a DNA double helix spanning the screen, computed live
-       each frame so it spins + flows in from the sides. Here we only
-       assign each particle its place on the molecule. */
+       each frame so it spins + flows in from the sides.
+
+       ★★ HELIX TUNING — these four numbers are the ones to touch ★★
+       HELIX_LENGTH  : how far it stretches across the screen (bigger = longer)
+       HELIX_HEIGHT  : total vertical size — set to run parallel to the title
+       HELIX_CENTER_Y: moves it up/down (0 = vertical middle of the hero)
+       HELIX_TUBE    : strand thickness (bigger = chunkier, meatier strands) */
+    const HELIX_LENGTH   = isMobile ? 64 : 96;
+    const HELIX_HEIGHT   = isMobile ? 18 : 26;
+    const HELIX_CENTER_Y = 0;
+    const HELIX_TUBE     = isMobile ? 1.2 : 1.6;
+
     const helix = {
       s: new Float32Array(COUNT),      // 0..1 position along the strand
       role: new Uint8Array(COUNT),     // 0/1 = backbone strands, 2 = base-pair rung
       f: new Float32Array(COUNT),      // rung fraction between the strands
-      span: isMobile ? 60 : 96,        // world width, edge to edge
-      radius: isMobile ? 7 : 9,
+      ox: new Float32Array(COUNT),     // fixed thickness offsets (the "tube")
+      oy: new Float32Array(COUNT),
+      oz: new Float32Array(COUNT),
+      span: HELIX_LENGTH,
+      radius: HELIX_HEIGHT / 2,
+      cy: HELIX_CENTER_Y,
       turns: isMobile ? 3.5 : 5.5,
       rungs: isMobile ? 26 : 42,
     };
@@ -64,6 +78,11 @@ function initField() {
         helix.s[i] = ((Math.random() * helix.rungs) | 0) / helix.rungs + 0.5 / helix.rungs;
         helix.f[i] = Math.random();
       }
+      // scatter each particle inside a little tube around its strand
+      const tube = helix.role[i] === 2 ? HELIX_TUBE * 0.45 : HELIX_TUBE;
+      helix.ox[i] = (Math.random() - 0.5) * tube;
+      helix.oy[i] = (Math.random() - 0.5) * tube;
+      helix.oz[i] = (Math.random() - 0.5) * tube;
     }
     const order = new Float32Array(COUNT * 3); // written every frame
 
@@ -81,20 +100,63 @@ function initField() {
     const positions = new Float32Array(chaos);
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geo.setAttribute('aCol', new THREE.BufferAttribute(colors, 3));
 
-    const mat = new THREE.PointsMaterial({
-      size: isMobile ? 0.42 : 0.34,
-      vertexColors: true,
+    // every particle is a digit 0–9
+    const digits = new Float32Array(COUNT);
+    for (let i = 0; i < COUNT; i++) digits[i] = (Math.random() * 10) | 0;
+    geo.setAttribute('aDigit', new THREE.BufferAttribute(digits, 1));
+
+    /* digit atlas: 0–9 drawn white on a strip, tinted per-particle in the shader
+       so the ink / pine / lime palette is preserved exactly */
+    const atlasCanvas = document.createElement('canvas');
+    atlasCanvas.width = 640; atlasCanvas.height = 64;
+    const actx = atlasCanvas.getContext('2d');
+    actx.fillStyle = '#fff';
+    actx.font = '700 52px "IBM Plex Mono", monospace';
+    actx.textAlign = 'center'; actx.textBaseline = 'middle';
+    for (let d = 0; d < 10; d++) actx.fillText(String(d), d * 64 + 32, 36);
+    const atlas = new THREE.CanvasTexture(atlasCanvas);
+
+    const mat = new THREE.ShaderMaterial({
       transparent: true,
-      opacity: 0.85,
       depthWrite: false,
+      uniforms: {
+        uAtlas: { value: atlas },
+        uSize:  { value: isMobile ? 0.42 : 0.34 },  // same particle size as before
+        uScale: { value: 300 },
+        uOpacity: { value: 0.85 },
+      },
+      vertexShader: `
+        attribute vec3 aCol;
+        attribute float aDigit;
+        uniform float uSize, uScale;
+        varying vec3 vColor;
+        varying float vDigit;
+        void main() {
+          vColor = aCol;
+          vDigit = aDigit;
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = uSize * (uScale / -mv.z);
+          gl_Position = projectionMatrix * mv;
+        }`,
+      fragmentShader: `
+        uniform sampler2D uAtlas;
+        uniform float uOpacity;
+        varying vec3 vColor;
+        varying float vDigit;
+        void main() {
+          vec2 uv = vec2((vDigit + gl_PointCoord.x) / 10.0, 1.0 - gl_PointCoord.y);
+          float a = texture2D(uAtlas, uv).a;
+          if (a < 0.25) discard;
+          gl_FragColor = vec4(vColor, a * uOpacity);
+        }`,
     });
 
     scene.add(new THREE.Points(geo, mat));
 
     three = {
-      renderer, scene, camera, geo, positions, chaos, order, helix, COUNT,
+      renderer, scene, camera, geo, positions, chaos, order, helix, mat, COUNT,
       mix: 0, target: 0,
       mouse: new THREE.Vector2(-99, -99),
       mouseWorld: new THREE.Vector3(999, 999, 0),
@@ -115,6 +177,7 @@ function resize() {
   if (!three) return;
   const w = canvas.clientWidth, h = canvas.clientHeight;
   three.renderer.setSize(w, h, false);
+  three.mat.uniforms.uScale.value = h * 0.5 * Math.min(window.devicePixelRatio, 2);
   three.camera.aspect = w / h;
   three.camera.updateProjectionMatrix();
 }
@@ -154,19 +217,19 @@ function animate() {
     const sway = Math.sin(T.t * 0.8) * 1.6 * drift; // slow vertical breathing
     for (let i = 0; i < T.COUNT; i++) {
       const s = H.s[i], j = i * 3;
-      const x = (s - 0.5) * H.span;
+      const x = (s - 0.5) * H.span + H.ox[i];
       const a = s * H.turns * TAU + spin;
       if (H.role[i] === 2) {
         // base-pair rung: bridge between the two backbones
         const k = 1 - 2 * H.f[i];
         or[j]     = x;
-        or[j + 1] = Math.cos(a) * H.radius * k + sway;
-        or[j + 2] = Math.sin(a) * H.radius * k;
+        or[j + 1] = Math.cos(a) * H.radius * k + H.cy + H.oy[i] + sway;
+        or[j + 2] = Math.sin(a) * H.radius * k + H.oz[i];
       } else {
         const ph = H.role[i] === 0 ? 0 : Math.PI;
         or[j]     = x;
-        or[j + 1] = Math.cos(a + ph) * H.radius + sway;
-        or[j + 2] = Math.sin(a + ph) * H.radius;
+        or[j + 1] = Math.cos(a + ph) * H.radius + H.cy + H.oy[i] + sway;
+        or[j + 2] = Math.sin(a + ph) * H.radius + H.oz[i];
       }
     }
   }
