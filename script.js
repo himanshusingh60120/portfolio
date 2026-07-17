@@ -39,29 +39,40 @@ function initField() {
       chaos[i * 3 + 2] = (Math.random() - 0.5) * 40;
     }
 
-    /* ORDER: a rising bar-chart grid (the automated world) */
+    /* ORDER: particles assemble into something meaningful —
+       the word AUTOMATE plus a rising arrow, sampled from rendered text */
     const order = new Float32Array(COUNT * 3);
     {
-      const COLS = isMobile ? 14 : 22;
-      const DEPTH = 4;
-      const spacing = isMobile ? 3.4 : 3.1;
-      const x0 = -((COLS - 1) * spacing) / 2;
+      const word = isMobile ? 'AUTO' : 'AUTOMATE';
+      const cw = 640, chh = 200;
+      const c2d = document.createElement('canvas');
+      c2d.width = cw; c2d.height = chh;
+      const ctx = c2d.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = `900 ${isMobile ? 150 : 110}px Arial Black, Arial, sans-serif`;
+      ctx.fillText(word, cw / 2, chh * 0.42);
+      // rising arrow underneath: ↗
+      ctx.font = '900 70px Arial, sans-serif';
+      ctx.fillText('↗', cw / 2, chh * 0.86);
 
-      const heights = [];
-      for (let c = 0; c < COLS; c++) {
-        const trend = 6 + (c / (COLS - 1)) * 18;   // up and to the right, obviously
-        const wobble = Math.sin(c * 1.7) * 3 + Math.sin(c * 0.6) * 2;
-        heights.push(Math.max(4, trend + wobble));
+      const img = ctx.getImageData(0, 0, cw, chh).data;
+      const pts = [];
+      for (let y = 0; y < chh; y += 2) {
+        for (let x = 0; x < cw; x += 2) {
+          if (img[(y * cw + x) * 4 + 3] > 128) pts.push([x, y]);
+        }
       }
 
-      let i = 0;
-      while (i < COUNT) {
-        const c = i % COLS;
-        const h = heights[c];
-        order[i * 3]     = x0 + c * spacing + (Math.random() - 0.5) * 0.9;
-        order[i * 3 + 1] = -14 + Math.random() * h;
-        order[i * 3 + 2] = (Math.random() - 0.5) * DEPTH * 2.4;
-        i++;
+      // map canvas pixels → world coords
+      const worldW = isMobile ? 46 : 72;
+      const worldH = worldW * (chh / cw);
+      for (let i = 0; i < COUNT; i++) {
+        const [px, py] = pts[(Math.random() * pts.length) | 0];
+        order[i * 3]     = (px / cw - 0.5) * worldW + (Math.random() - 0.5) * 0.5;
+        order[i * 3 + 1] = (0.5 - py / chh) * worldH + 2 + (Math.random() - 0.5) * 0.5;
+        order[i * 3 + 2] = (Math.random() - 0.5) * 3;
       }
     }
 
@@ -222,9 +233,11 @@ if (!prefersReduced) {
 /* ──────────────────────────────────────────────
    2 · SCRAMBLE DECODE (dirty data → clean text)
 ────────────────────────────────────────────── */
-const GLYPHS = '█▓▒░#%&$@!?<>{}[]0123456789';
+/* letters/digits only — same visual width as the real text,
+   so the scrambled state never overflows or looks longer */
+const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-function scramble(el, duration = 900) {
+function scramble(el, duration = 2400) {
   const target = el.dataset.text;
   const t0 = performance.now();
   el.dataset.busy = '1';
@@ -235,6 +248,7 @@ function scramble(el, duration = 900) {
     for (let i = settled; i < target.length; i++) {
       out += target[i] === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
     }
+    out = out.slice(0, target.length); // never exceed the real character count
     el.textContent = out;
     if (p < 1) requestAnimationFrame(frame);
     else delete el.dataset.busy;
@@ -243,10 +257,10 @@ function scramble(el, duration = 900) {
 
 const scrambles = document.querySelectorAll('.scramble');
 if (!prefersReduced) {
-  scrambles.forEach((el, i) => setTimeout(() => scramble(el), 300 + i * 250));
+  scrambles.forEach((el, i) => setTimeout(() => scramble(el), 400 + i * 450));
   // re-clean the data on hover, because dirty data always comes back
   document.getElementById('heroTitle').addEventListener('mouseenter', () => {
-    scrambles.forEach((el) => { if (!el.dataset.busy) scramble(el, 500); });
+    scrambles.forEach((el) => { if (!el.dataset.busy) scramble(el, 1400); });
   });
 }
 
@@ -406,9 +420,9 @@ const liveCells = document.getElementById('liveCells');
 if (liveCells) {
   let n = 0;
   (function tick() {
-    n += 1 + ((Math.random() * 7) | 0);
+    n += 1; // one cell at a time — the pipeline is thorough, not frantic
     liveCells.textContent = n.toLocaleString();
-    setTimeout(tick, prefersReduced ? 2000 : 180 + Math.random() * 900);
+    setTimeout(tick, prefersReduced ? 6000 : 2500 + Math.random() * 3000);
   })();
 }
 
