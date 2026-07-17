@@ -110,15 +110,19 @@ body.has-pointer .cell-cursor{opacity:1}
 .hero-title{
   font-family:var(--display);
   font-size:clamp(56px,11.5vw,168px);
-  line-height:.94;letter-spacing:.01em;
+  line-height:1;letter-spacing:.01em;
   text-transform:uppercase;
   cursor:default;
 }
-.hero-title .line{display:block}
+.hero-title .line{display:block;margin-bottom:.06em}
 .hero-title em{
   font-style:normal;color:var(--paper);
-  background:var(--ink);padding:0 .08em;
-  box-shadow:.12em .12em 0 var(--lime);
+  background:var(--ink);
+  display:inline-block;            /* box height follows its own line-height… */
+  line-height:1.04;                /* …so the card hugs the letters */
+  padding:0 .1em;
+  vertical-align:baseline;
+  box-shadow:.09em .09em 0 var(--lime);
 }
 .scramble{white-space:pre}
 .hero-sub{
@@ -216,11 +220,13 @@ body.has-pointer .cell-cursor{opacity:1}
 }
 .section-title{
   font-family:var(--display);text-transform:uppercase;
-  font-size:clamp(40px,7vw,96px);line-height:.95;
+  font-size:clamp(40px,7vw,96px);line-height:1;
 }
+.section-title span{display:inline-block;vertical-align:baseline}
 .section-title span:last-child{
-  color:var(--paper);background:var(--ink);padding:0 .1em;
-  box-shadow:.1em .1em 0 var(--lime);
+  color:var(--paper);background:var(--ink);
+  line-height:1.04;padding:0 .12em;
+  box-shadow:.08em .08em 0 var(--lime);
 }
 .section-note{font-size:12px;letter-spacing:.1em;color:var(--pine);text-transform:uppercase}
 
