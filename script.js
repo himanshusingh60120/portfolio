@@ -39,42 +39,33 @@ function initField() {
       chaos[i * 3 + 2] = (Math.random() - 0.5) * 40;
     }
 
-    /* ORDER: particles assemble into something meaningful —
-       the word AUTOMATE plus a rising arrow, sampled from rendered text */
-    const order = new Float32Array(COUNT * 3);
-    {
-      const word = isMobile ? 'AUTO' : 'AUTOMATE';
-      const cw = 640, chh = 200;
-      const c2d = document.createElement('canvas');
-      c2d.width = cw; c2d.height = chh;
-      const ctx = c2d.getContext('2d');
-      ctx.fillStyle = '#fff';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = `900 ${isMobile ? 150 : 110}px Arial Black, Arial, sans-serif`;
-      ctx.fillText(word, cw / 2, chh * 0.42);
-      // rising arrow underneath: ↗
-      ctx.font = '900 70px Arial, sans-serif';
-      ctx.fillText('↗', cw / 2, chh * 0.86);
-
-      const img = ctx.getImageData(0, 0, cw, chh).data;
-      const pts = [];
-      for (let y = 0; y < chh; y += 2) {
-        for (let x = 0; x < cw; x += 2) {
-          if (img[(y * cw + x) * 4 + 3] > 128) pts.push([x, y]);
-        }
-      }
-
-      // map canvas pixels → world coords
-      const worldW = isMobile ? 46 : 72;
-      const worldH = worldW * (chh / cw);
-      for (let i = 0; i < COUNT; i++) {
-        const [px, py] = pts[(Math.random() * pts.length) | 0];
-        order[i * 3]     = (px / cw - 0.5) * worldW + (Math.random() - 0.5) * 0.5;
-        order[i * 3 + 1] = (0.5 - py / chh) * worldH + 2 + (Math.random() - 0.5) * 0.5;
-        order[i * 3 + 2] = (Math.random() - 0.5) * 3;
+    /* ORDER: a DNA double helix spanning the screen, computed live
+       each frame so it spins + flows in from the sides. Here we only
+       assign each particle its place on the molecule. */
+    const helix = {
+      s: new Float32Array(COUNT),      // 0..1 position along the strand
+      role: new Uint8Array(COUNT),     // 0/1 = backbone strands, 2 = base-pair rung
+      f: new Float32Array(COUNT),      // rung fraction between the strands
+      span: isMobile ? 60 : 96,        // world width, edge to edge
+      radius: isMobile ? 7 : 9,
+      turns: isMobile ? 3.5 : 5.5,
+      rungs: isMobile ? 26 : 42,
+    };
+    for (let i = 0; i < COUNT; i++) {
+      const r = Math.random();
+      if (r < 0.4) {                   // strand A
+        helix.role[i] = 0;
+        helix.s[i] = Math.random();
+      } else if (r < 0.8) {            // strand B
+        helix.role[i] = 1;
+        helix.s[i] = Math.random();
+      } else {                         // rung: snap to a discrete base pair
+        helix.role[i] = 2;
+        helix.s[i] = ((Math.random() * helix.rungs) | 0) / helix.rungs + 0.5 / helix.rungs;
+        helix.f[i] = Math.random();
       }
     }
+    const order = new Float32Array(COUNT * 3); // written every frame
 
     /* colors: ink dots with a scatter of pine + lime */
     const colors = new Float32Array(COUNT * 3);
@@ -103,7 +94,7 @@ function initField() {
     scene.add(new THREE.Points(geo, mat));
 
     three = {
-      renderer, scene, camera, geo, positions, chaos, order, COUNT,
+      renderer, scene, camera, geo, positions, chaos, order, helix, COUNT,
       mix: 0, target: 0,
       mouse: new THREE.Vector2(-99, -99),
       mouseWorld: new THREE.Vector3(999, 999, 0),
@@ -154,6 +145,31 @@ function animate() {
 
   const pos = T.positions, ch = T.chaos, or = T.order;
   const mw = T.mouseWorld;
+
+  /* write this frame's DNA helix into `order` — the spin makes it
+     look like the molecule is flowing in from the sides of the screen */
+  if (m > 0.004) {
+    const H = T.helix, TAU = Math.PI * 2;
+    const spin = T.t * (drift ? 2.2 : 0);          // screw rotation = sideways flow
+    const sway = Math.sin(T.t * 0.8) * 1.6 * drift; // slow vertical breathing
+    for (let i = 0; i < T.COUNT; i++) {
+      const s = H.s[i], j = i * 3;
+      const x = (s - 0.5) * H.span;
+      const a = s * H.turns * TAU + spin;
+      if (H.role[i] === 2) {
+        // base-pair rung: bridge between the two backbones
+        const k = 1 - 2 * H.f[i];
+        or[j]     = x;
+        or[j + 1] = Math.cos(a) * H.radius * k + sway;
+        or[j + 2] = Math.sin(a) * H.radius * k;
+      } else {
+        const ph = H.role[i] === 0 ? 0 : Math.PI;
+        or[j]     = x;
+        or[j + 1] = Math.cos(a + ph) * H.radius + sway;
+        or[j + 2] = Math.sin(a + ph) * H.radius;
+      }
+    }
+  }
 
   for (let i = 0; i < T.COUNT; i++) {
     const ix = i * 3, iy = ix + 1, iz = ix + 2;
