@@ -29,7 +29,7 @@ function initField() {
     camera.position.set(0, 4, 46);
 
     const isMobile = window.innerWidth < 700;
-    const COUNT = isMobile ? 2600 : 5200;
+    const COUNT = isMobile ? 3600 : 7500;
 
     /* CHAOS: scattered noise cloud (the manual world) */
     const chaos = new Float32Array(COUNT * 3);
@@ -123,7 +123,7 @@ function initField() {
       depthWrite: false,
       uniforms: {
         uAtlas: { value: atlas },
-        uSize:  { value: isMobile ? 0.42 : 0.34 },  // same particle size as before
+        uSize:  { value: isMobile ? 0.85 : 1.0 },   // digit size — bigger = more legible
         uScale: { value: 300 },
         uOpacity: { value: 0.85 },
       },
