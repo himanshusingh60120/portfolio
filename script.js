@@ -521,3 +521,39 @@ if (clockEl) {
     setTimeout(clock, 1000);
   })();
 }
+
+/* ───────────────────────────────────────────────
+   LOCKED PROJECTS · internal tools, no tourists
+─────────────────────────────────────────────── */
+(() => {
+  const EXCUSES = [
+    "This one's internal — it's wired into live company data, and my employer has a strong preference for that data staying employed here too. You get the blueprint above; the keys stay in the building.",
+    "Still locked. The tool runs against a real prospect database with real people's emails in it. Opening that to the internet is how you end up in a compliance meeting with no snacks.",
+    "I admire the persistence. It genuinely exists and genuinely runs — every weekday, on production data. That's exactly why it can't be a public demo. The pipeline diagram above is the guided tour.",
+    "Okay, real talk: the API keys alone would make this demo the most expensive free product on the internet. Read the write-up, then ask me about it — I'll happily walk through the architecture on a call.",
+    "You've clicked this five times. I respect that. It's still internal. But this level of QA instinct is exactly what these tools are built to reward — my contact section is right at the bottom.",
+  ];
+
+  document.querySelectorAll('.project-locked').forEach((card) => {
+    let clicks = 0;
+    let note = null;
+
+    const show = () => {
+      if (!note) {
+        note = document.createElement('p');
+        note.className = 'locked-note mono';
+        card.querySelector('.project-main').appendChild(note);
+      }
+      note.textContent = '⌁ ' + EXCUSES[Math.min(clicks, EXCUSES.length - 1)];
+      note.classList.remove('pop');
+      void note.offsetWidth;           // restart the animation
+      note.classList.add('pop');
+      clicks++;
+    };
+
+    card.addEventListener('click', show);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(); }
+    });
+  });
+})();
