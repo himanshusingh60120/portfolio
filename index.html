@@ -119,22 +119,28 @@
 <section class="work" id="work">
   <div class="section-head">
     <h2 class="section-title"><span>SELECTED</span> <span>WORK</span></h2>
-    <p class="section-note mono">04 tools · all live · click a row and use the real thing, not a screenshot</p>
+    <p class="section-note mono">04 tools · all in production · internal, so you get the blueprint, not the keys</p>
   </div>
 
   <!-- 01 · Kings Cadence -->
-  <a class="project reveal" href="https://kings-cadence.vercel.app/" target="_blank" rel="noopener noreferrer">
+  <div class="project reveal project-locked" role="button" tabindex="0">
     <div class="row-no mono">01</div>
     <div class="project-main">
       <div class="project-tags mono">GOOGLE SHEETS API · OPENAI · EMBEDDINGS · REVOPS</div>
       <h3 class="project-title">KINGS CADENCE</h3>
       <p class="project-hook">Cold email, minus the cold sweat.</p>
       <p class="project-body">
-        Reads a sheet of prospects, checks what each company has actually been up to
-        (mergers, expansions, new regulation), pairs them with the most relevant report
-        in the catalog via embeddings and GPT reranking, then writes four personalized
-        advisory emails straight back into the sheet. The sales team wakes up to a
-        finished cadence and takes the credit. I'm at peace with this.
+        A full outbound pipeline that starts from nothing but a Google Sheet of
+        prospect names. For each company it runs a news screen — mergers, expansions,
+        funding, fresh regulation — so the outreach hooks onto something that actually
+        happened this quarter, not a generic pitch. That signal is embedded and matched
+        against the report catalog, with GPT reranking the shortlist so the single most
+        relevant report wins, not just the closest vector. It then drafts a four-touch
+        advisory cadence — each email personalized to the company, the trigger event,
+        and the matched report — and writes the whole sequence back into the sheet the
+        team already lives in. No new tab, no new tool to learn, no copy-pasting between
+        systems. The sales team wakes up to a finished cadence and takes the credit.
+        I'm at peace with this.
       </p>
       <div class="pipeline mono" aria-hidden="true">
         <span class="pipe-step">SHEET</span><span class="pipe-arrow">→</span>
@@ -145,22 +151,27 @@
         <span class="packet" aria-hidden="true"></span>
       </div>
     </div>
-    <div class="project-cta mono">OPEN LIVE TOOL <span class="arrow">↗</span></div>
-  </a>
+    <div class="project-cta mono">INTERNAL TOOL <span class="arrow">⌁</span></div>
+  </div>
 
   <!-- 02 · Report Mapper -->
-  <a class="project reveal" href="https://report-mapper-kr.vercel.app/" target="_blank" rel="noopener noreferrer">
+  <div class="project reveal project-locked" role="button" tabindex="0">
     <div class="row-no mono">02</div>
     <div class="project-main">
       <div class="project-tags mono">EMBEDDINGS · GPT RERANK · 3,000+ REPORT CATALOG</div>
       <h3 class="project-title">REPORT MAPPER</h3>
       <p class="project-hook">3,000 reports. One right answer per lead.</p>
       <p class="project-body">
-        Takes a raw B2B prospect list and pairs every lead with the single most relevant
-        market-research report: embedding shortlist first, GPT reranking on top. It also
-        checks whether the lead still works where the list claims they do. People change
-        jobs constantly. This tool holds a grudge against stale data, finds the new
-        employer, and quietly rematches.
+        Purchased B2B lists have two chronic diseases: irrelevant matches and stale
+        job data. This fixes both in one pass over a 3,000+ report catalog. Matching is
+        two-stage by design — embeddings do the cheap, fast shortlist across the whole
+        catalog, then GPT reranks only the top candidates, so you get semantic accuracy
+        without paying LLM prices on every comparison. Before a match is trusted, the
+        tool verifies the lead still works where the list claims: people change jobs
+        constantly, and an email about their old employer's industry is worse than no
+        email. When it detects a move, it finds the new employer and quietly rematches
+        the lead against the catalog under the new context. What comes out is a list
+        where every row has a defensible reason to exist.
       </p>
       <div class="pipeline mono" aria-hidden="true">
         <span class="pipe-step">PROSPECT LIST</span><span class="pipe-arrow">→</span>
@@ -171,22 +182,28 @@
         <span class="packet" aria-hidden="true"></span>
       </div>
     </div>
-    <div class="project-cta mono">OPEN LIVE TOOL <span class="arrow">↗</span></div>
-  </a>
+    <div class="project-cta mono">INTERNAL TOOL <span class="arrow">⌁</span></div>
+  </div>
 
   <!-- 03 · Ranking Analyser -->
-  <a class="project reveal" href="https://ranking-analyser.vercel.app/" target="_blank" rel="noopener noreferrer">
+  <div class="project reveal project-locked" role="button" tabindex="0">
     <div class="row-no mono">03</div>
     <div class="project-main">
       <div class="project-tags mono">SEO DIAGNOSTICS · SEARCH CONSOLE API · BULK CSV</div>
       <h3 class="project-title">RANKING ANALYSER</h3>
       <p class="project-hook">An X-ray machine for search rankings.</p>
       <p class="project-body">
-        Scans a page head to toe, auto-pulls the matching page from each competitor,
-        and reads back exactly why they outrank you: depth, schema, in-content links,
-        E-E-A-T, AI-overview coverage. With weights. Not "content is king" hand-waving,
-        actual numbers. A bulk mode enriches an entire CSV of URLs with rank, CTR,
-        impressions and clicks pulled straight from Search Console.
+        Point it at one of your URLs and it does what an SEO consultant does in a
+        two-hour audit: finds the competing page each rival ranks for the same intent,
+        tears both down side by side, and scores the gap across weighted factors —
+        content depth, schema coverage, in-content link structure, E-E-A-T signals,
+        and whether AI overviews are quoting them instead of you. Every factor carries
+        an explicit weight, so the output is a ranked diagnosis of *why* they win, not
+        "content is king" hand-waving. The verdict comes back as actual numbers you can
+        prioritize fixes against. Bulk mode scales the same X-ray to an entire CSV of
+        URLs, enriching each row with live rank, CTR, impressions and clicks pulled
+        straight from the Search Console API — one upload, a full portfolio health
+        report out.
       </p>
       <div class="pipeline mono" aria-hidden="true">
         <span class="pipe-step">YOUR URL</span><span class="pipe-arrow">→</span>
@@ -196,22 +213,27 @@
         <span class="packet" aria-hidden="true"></span>
       </div>
     </div>
-    <div class="project-cta mono">OPEN LIVE TOOL <span class="arrow">↗</span></div>
-  </a>
+    <div class="project-cta mono">INTERNAL TOOL <span class="arrow">⌁</span></div>
+  </div>
 
   <!-- 04 · KR Interlinker -->
-  <a class="project reveal" href="https://kr-interlinker.vercel.app/" target="_blank" rel="noopener noreferrer">
+  <div class="project reveal project-locked" role="button" tabindex="0">
     <div class="row-no mono">04</div>
     <div class="project-main">
       <div class="project-tags mono">OPENAI API · SERVERLESS · VERCEL · SEO</div>
       <h3 class="project-title">KR INTERLINKER</h3>
       <p class="project-hook">Internal links that place themselves.</p>
       <p class="project-body">
-        Generates contextual internal-link suggestions across an entire content library
-        using the OpenAI API, so nobody spends an afternoon hunting for anchor text ever
-        again. Deployed serverless on Vercel with a strict frontend/backend split: the
-        API key never touches the browser, because "we got scraped" is not a fun thing
-        to say in standup. Built for Kings Research, running on real content.
+        Internal linking is the job everyone agrees matters and nobody wants to do:
+        reread the whole library, remember what exists, find natural anchor text, repeat
+        for every new post. This automates the entire loop. It reads the content library,
+        understands what each piece is actually about via the OpenAI API, and proposes
+        contextual link placements — real anchor text in real sentences, pointing at the
+        genuinely related piece, not keyword-stuffed shortcuts. Architecture is a strict
+        frontend/backend split deployed serverless on Vercel: the browser only ever talks
+        to my API layer, and the OpenAI key lives server-side in environment config,
+        because "we got scraped" is not a fun thing to say in standup. Built for Kings
+        Research and running against the production content library, not a demo dataset.
       </p>
       <div class="pipeline mono" aria-hidden="true">
         <span class="pipe-step">CONTENT LIBRARY</span><span class="pipe-arrow">→</span>
@@ -221,8 +243,8 @@
         <span class="packet" aria-hidden="true"></span>
       </div>
     </div>
-    <div class="project-cta mono">OPEN LIVE TOOL <span class="arrow">↗</span></div>
-  </a>
+    <div class="project-cta mono">INTERNAL TOOL <span class="arrow">⌁</span></div>
+  </div>
 </section>
 
 <!-- ── EXPERIENCE ────────────────────────────────────────── -->
