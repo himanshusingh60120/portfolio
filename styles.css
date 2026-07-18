@@ -460,3 +460,24 @@ a.garage-card:hover .speedline{opacity:1}
   .ticker-track{transform:none}
   .bike-card.redline{animation:none !important}
 }
+
+/* locked project note */
+.project-locked{cursor:pointer}
+.locked-note{
+  margin-top:14px;
+  padding:10px 14px;
+  font-size:12.5px;
+  line-height:1.55;
+  color:var(--lime);
+  background:var(--ink);
+  border-left:3px solid var(--lime);
+  max-width:640px;
+}
+.locked-note.pop{animation:lockedPop .35s ease}
+@keyframes lockedPop{
+  0%{transform:translateY(6px);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
+@media (prefers-reduced-motion:reduce){
+  .locked-note.pop{animation:none}
+}
