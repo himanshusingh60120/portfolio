@@ -9,9 +9,25 @@
    7. Live "cells auto-filled" stat · counters · reveals · clock
 ══════════════════════════════════════════════════════════ */
 
-import * as THREE from 'three';
+let THREE = null;
 
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Load three.js without letting a CDN hiccup kill the whole script.
+   Primary: the import-map entry. Fallback: a second CDN. */
+(async () => {
+  try {
+    THREE = await import('three');
+  } catch {
+    try {
+      THREE = await import('https://unpkg.com/three@0.160.0/build/three.module.js');
+    } catch {
+      document.getElementById('field').style.display = 'none';
+      return;
+    }
+  }
+  initField();
+})();
 
 /* ──────────────────────────────────────────────
    1 · PARTICLE FIELD
@@ -97,7 +113,20 @@ function initField() {
       colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
     }
 
-    const positions = new Float32Array(chaos);
+    /* SWARM-IN INTRO: every particle starts far outside the frame on a
+       big random shell, then swarms into the chaos cloud on load */
+    const introFrom = new Float32Array(COUNT * 3);
+    for (let i = 0; i < COUNT; i++) {
+      const th = Math.random() * Math.PI * 2;
+      const ph = Math.acos(2 * Math.random() - 1);
+      const rad = 120 + Math.random() * 80;
+      introFrom[i * 3]     = Math.sin(ph) * Math.cos(th) * rad;
+      introFrom[i * 3 + 1] = Math.sin(ph) * Math.sin(th) * rad * 0.6;
+      introFrom[i * 3 + 2] = Math.cos(ph) * rad * 0.5;
+    }
+
+    /* first frame starts off-screen (or settled, if reduced motion) */
+    const positions = new Float32Array(prefersReduced ? chaos : introFrom);
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geo.setAttribute('aCol', new THREE.BufferAttribute(colors, 3));
@@ -112,11 +141,29 @@ function initField() {
     const atlasCanvas = document.createElement('canvas');
     atlasCanvas.width = 640; atlasCanvas.height = 64;
     const actx = atlasCanvas.getContext('2d');
-    actx.fillStyle = '#fff';
-    actx.font = '700 52px "IBM Plex Mono", monospace';
-    actx.textAlign = 'center'; actx.textBaseline = 'middle';
-    for (let d = 0; d < 10; d++) actx.fillText(String(d), d * 64 + 32, 36);
+
+    function drawAtlas(font) {
+      actx.clearRect(0, 0, 640, 64);
+      actx.fillStyle = '#fff';
+      actx.font = font;
+      actx.textAlign = 'center'; actx.textBaseline = 'middle';
+      for (let d = 0; d < 10; d++) actx.fillText(String(d), d * 64 + 32, 36);
+    }
+
+    /* Draw immediately with a guaranteed system font so digits exist from
+       the very first frame — the webfont may still be loading and some
+       browsers paint NOTHING for a loading font, leaving the atlas blank
+       (which is why the field sometimes never appeared). */
+    drawAtlas('700 52px monospace');
     const atlas = new THREE.CanvasTexture(atlasCanvas);
+
+    /* Upgrade to IBM Plex Mono the moment it's actually ready */
+    if (document.fonts?.load) {
+      document.fonts.load('700 52px "IBM Plex Mono"').then(() => {
+        drawAtlas('700 52px "IBM Plex Mono", monospace');
+        atlas.needsUpdate = true;
+      }).catch(() => {});
+    }
 
     const mat = new THREE.ShaderMaterial({
       transparent: true,
@@ -164,6 +211,8 @@ function initField() {
       plane: new THREE.Plane(new THREE.Vector3(0, 0, 1), 0),
       t: 0,
       rumble: 0, // fed by the throttle, because why not
+      introFrom,
+      intro: prefersReduced ? 1 : 0, // 0 → off-screen shell, 1 → settled
     };
 
     resize();
@@ -176,6 +225,7 @@ function initField() {
 function resize() {
   if (!three) return;
   const w = canvas.clientWidth, h = canvas.clientHeight;
+  if (!w || !h) { requestAnimationFrame(resize); return; } // layout not ready yet
   three.renderer.setSize(w, h, false);
   three.mat.uniforms.uScale.value = h * 0.5 * Math.min(window.devicePixelRatio, 2);
   three.camera.aspect = w / h;
@@ -208,6 +258,10 @@ function animate() {
 
   const pos = T.positions, ch = T.chaos, or = T.order;
   const mw = T.mouseWorld;
+
+  /* swarm-in progress: ~1.6s, ease-out so it decelerates into place */
+  if (T.intro < 1) T.intro = Math.min(1, T.intro + 0.011);
+  const ie = 1 - Math.pow(1 - T.intro, 3);
 
   /* write this frame's DNA helix into `order` — the spin makes it
      look like the molecule is flowing in from the sides of the screen */
@@ -245,6 +299,15 @@ function animate() {
     let ty = ch[iy] * (1 - m) + or[iy] * m + dy + by;
     let tz = ch[iz] * (1 - m) + or[iz] * m;
 
+    if (ie < 1) {
+      // stagger: earlier particles land first, the tail keeps streaming in
+      const e = Math.min(1, Math.max(0, ie * 1.35 - (i / T.COUNT) * 0.35));
+      const inv = 1 - e;
+      tx = T.introFrom[ix] * inv + tx * e;
+      ty = T.introFrom[iy] * inv + ty * e;
+      tz = T.introFrom[iz] * inv + tz * e;
+    }
+
     if (rumble > 0.01) {
       tx += (Math.random() - 0.5) * rumble;
       ty += (Math.random() - 0.5) * rumble;
@@ -275,8 +338,6 @@ function animate() {
   T.camera.lookAt(0, 0, 0);
   T.renderer.render(T.scene, T.camera);
 }
-
-initField();
 
 /* ── the switch (+ keyboard shortcut) ───────── */
 const toggle = document.getElementById('modeToggle');
