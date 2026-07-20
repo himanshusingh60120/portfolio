@@ -41,7 +41,7 @@ function initField() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 200);
+    const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 400);
     camera.position.set(0, 4, 46);
 
     const isMobile = window.innerWidth < 700;
@@ -142,27 +142,57 @@ function initField() {
     atlasCanvas.width = 640; atlasCanvas.height = 64;
     const actx = atlasCanvas.getContext('2d');
 
-    function drawAtlas(font) {
-      actx.clearRect(0, 0, 640, 64);
-      actx.fillStyle = '#fff';
-      actx.font = font;
-      actx.textAlign = 'center'; actx.textBaseline = 'middle';
-      for (let d = 0; d < 10; d++) actx.fillText(String(d), d * 64 + 32, 36);
+    /* Draw digits into a scratch canvas first and VERIFY pixels actually
+       landed before swapping it in. A blank atlas = every fragment
+       discarded = invisible field, so we never blindly clear + redraw. */
+    const scratch = document.createElement('canvas');
+    scratch.width = 640; scratch.height = 64;
+    const sctx = scratch.getContext('2d', { willReadFrequently: true });
+
+    function renderDigits(ctx, font) {
+      ctx.clearRect(0, 0, 640, 64);
+      ctx.fillStyle = '#fff';
+      ctx.font = font;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      for (let d = 0; d < 10; d++) ctx.fillText(String(d), d * 64 + 32, 36);
     }
 
-    /* Draw immediately with a guaranteed system font so digits exist from
-       the very first frame — the webfont may still be loading and some
-       browsers paint NOTHING for a loading font, leaving the atlas blank
-       (which is why the field sometimes never appeared). */
-    drawAtlas('700 52px monospace');
-    const atlas = new THREE.CanvasTexture(atlasCanvas);
+    function hasInk(ctx) {
+      // sample the strip; if fillText silently painted nothing, alpha is all 0
+      const px = ctx.getImageData(0, 16, 640, 32).data;
+      for (let i = 3; i < px.length; i += 64) if (px[i] > 32) return true;
+      return false;
+    }
 
-    /* Upgrade to IBM Plex Mono the moment it's actually ready */
-    if (document.fonts?.load) {
-      document.fonts.load('700 52px "IBM Plex Mono"').then(() => {
-        drawAtlas('700 52px "IBM Plex Mono", monospace');
+    function tryDrawAtlas(font) {
+      try {
+        renderDigits(sctx, font);
+        if (!hasInk(sctx)) return false;      // font painted nothing → reject
+        actx.clearRect(0, 0, 640, 64);
+        actx.drawImage(scratch, 0, 0);
         atlas.needsUpdate = true;
-      }).catch(() => {});
+        return true;
+      } catch { return false; }
+    }
+
+    /* guaranteed-visible first draw: system monospace, with verification */
+    renderDigits(actx, '700 52px monospace');
+    const atlas = new THREE.CanvasTexture(atlasCanvas);
+    tryDrawAtlas('700 52px monospace');
+
+    /* Upgrade to IBM Plex Mono only once it verifiably renders. Retry a
+       few times because fonts.load() can resolve before glyphs rasterize. */
+    if (document.fonts?.load) {
+      let tries = 0;
+      const upgrade = () => {
+        if (tryDrawAtlas('700 52px "IBM Plex Mono", monospace')) return;
+        if (++tries < 5) setTimeout(upgrade, 400 * tries);
+      };
+      document.fonts.load('700 52px "IBM Plex Mono"')
+        .then(() => {
+          if (document.fonts.check('700 52px "IBM Plex Mono"')) upgrade();
+        })
+        .catch(() => {});
     }
 
     const mat = new THREE.ShaderMaterial({
@@ -232,6 +262,30 @@ function resize() {
   three.camera.updateProjectionMatrix();
 }
 window.addEventListener('resize', resize);
+
+/* ── resilience: the two ways the field can silently die ──
+   1. WebGL context loss (common on mobile when the tab is backgrounded,
+      or when reopening the link): preventDefault so the browser restores
+      the context, then resize + replay the swarm when it comes back. */
+canvas.addEventListener('webglcontextlost', (e) => e.preventDefault());
+canvas.addEventListener('webglcontextrestored', () => {
+  if (!three) return;
+  resize();
+  three.mat.uniforms.uAtlas.value.needsUpdate = true; // re-upload texture
+  three.intro = prefersReduced ? 1 : 0;               // swarm back in
+});
+
+/* 2. bfcache restore: opening the link again can resurrect the page from
+      cache with a stale/blank canvas. Re-sync and replay the entrance. */
+window.addEventListener('pageshow', (e) => {
+  if (!e.persisted || !three) return;
+  resize();
+  three.mat.uniforms.uAtlas.value.needsUpdate = true;
+  three.intro = prefersReduced ? 1 : 0;
+  // park everything back on the shell so the swarm-in is visible again
+  three.positions.set(prefersReduced ? three.chaos : three.introFrom);
+  three.geo.attributes.position.needsUpdate = true;
+});
 
 window.addEventListener('pointermove', (e) => {
   if (!three) return;
