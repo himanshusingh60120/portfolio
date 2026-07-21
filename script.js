@@ -55,23 +55,26 @@ function initField() {
       chaos[i * 3 + 2] = (Math.random() - 0.5) * 40;
     }
 
-    /* ORDER: a DNA double helix on the RIGHT side of the hero, computed
-       live each frame so it spins + flows.
+    /* ORDER: a DNA double helix stretched across the FULL hero width,
+       sitting low (below the vertical center) so the strands climb up
+       BEHIND the title — the text always layers on top of it. It forms
+       by rising from below the fold. Computed live each frame.
 
        ★★ HELIX TUNING ★★
        Sizes are FRACTIONS of the visible hero area (computed from the
        camera frustum in resize()), so the helix lands in the same spot
        on every screen instead of guessing world units.
        spanFrac   : width of the helix as a fraction of the hero width
-       cxFrac     : horizontal center (0 = middle, 0.25 = right side)
-       heightFrac : vertical size as a fraction of the hero height —
-                    0.72 leaves clean margins above and below
+       cxFrac     : horizontal center (0 = middle)
+       heightFrac : vertical size as a fraction of the hero height
+       cyFrac     : vertical center (negative = lower — "from below")
        tube       : strand thickness in world units */
     const HELIX_CFG = {
-      spanFrac:   isMobile ? 0.9  : 0.46,
-      cxFrac:     isMobile ? 0    : 0.26,
-      heightFrac: 0.72,
-      tube:       isMobile ? 1.2  : 1.6,
+      spanFrac:   0.96,               // full hero width — the title sits ON TOP
+      cxFrac:     0,                  // centered, not shoved aside
+      heightFrac: isMobile ? 0.5 : 0.62,
+      cyFrac:     -0.10,              // center pushed DOWN: helix lives low,
+      tube:       isMobile ? 1.2  : 1.6, // strands rise up behind the text
     };
     const HELIX_TUBE = HELIX_CFG.tube;
 
@@ -279,6 +282,7 @@ function resize() {
   const H = three.helix, C = H.cfg;
   H.span   = visW * C.spanFrac;
   H.cx     = visW * C.cxFrac;
+  H.cy     = visH * C.cyFrac;                // negative = sits below center
   H.radius = (visH * C.heightFrac) / 2;
   H.rz     = H.radius * 0.55; // flatter in depth → no perspective overspill
 }
@@ -355,6 +359,9 @@ function animate() {
     const H = T.helix, TAU = Math.PI * 2;
     const spin = T.t * (drift ? 2.2 : 0);          // screw rotation = sideways flow
     const sway = Math.sin(T.t * 0.8) * 0.8 * drift; // gentle vertical breathing
+    /* the helix FORMS FROM BELOW: while the mix is settling, its target
+       is displaced under the hero and slides up into place */
+    const rise = (1 - m) * (1 - m) * -(H.radius * 2.6);
     for (let i = 0; i < T.COUNT; i++) {
       const s = H.s[i], j = i * 3;
       const x = (s - 0.5) * H.span + H.cx + H.ox[i];
@@ -363,12 +370,12 @@ function animate() {
         // base-pair rung: bridge between the two backbones
         const k = 1 - 2 * H.f[i];
         or[j]     = x;
-        or[j + 1] = Math.cos(a) * H.radius * k + H.cy + H.oy[i] + sway;
+        or[j + 1] = Math.cos(a) * H.radius * k + H.cy + H.oy[i] + sway + rise;
         or[j + 2] = Math.sin(a) * H.rz * k + H.oz[i];
       } else {
         const ph = H.role[i] === 0 ? 0 : Math.PI;
         or[j]     = x;
-        or[j + 1] = Math.cos(a + ph) * H.radius + H.cy + H.oy[i] + sway;
+        or[j + 1] = Math.cos(a + ph) * H.radius + H.cy + H.oy[i] + sway + rise;
         or[j + 2] = Math.sin(a + ph) * H.rz + H.oz[i];
       }
     }
