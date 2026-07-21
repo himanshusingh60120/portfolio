@@ -55,26 +55,30 @@ function initField() {
       chaos[i * 3 + 2] = (Math.random() - 0.5) * 40;
     }
 
-    /* ORDER: a DNA double helix stretched across the FULL hero width,
-       sitting low (below the vertical center) so the strands climb up
-       BEHIND the title — the text always layers on top of it. It forms
-       by rising from below the fold. Computed live each frame.
+    /* ORDER: a DNA double helix occupying the RIGHT portion of the hero,
+       at the length shown in the reference. Its LEFT tail tucks behind the
+       title (text layers on top), so the strand's pinch-point "waist" is
+       hidden under the text instead of leaving an empty gap beside it. The
+       dense body of the helix sits clear to the right. It forms by rising
+       from below. Computed live each frame.
 
        ★★ HELIX TUNING ★★
        Sizes are FRACTIONS of the visible hero area (computed from the
        camera frustum in resize()), so the helix lands in the same spot
        on every screen instead of guessing world units.
        spanFrac   : width of the helix as a fraction of the hero width
-       cxFrac     : horizontal center (0 = middle)
+       cxFrac     : horizontal center (0 = middle, + = toward right edge).
+                    Keep the LEFT edge (cxFrac - spanFrac/2) slightly
+                    negative so the tail stays behind the text = no gap.
        heightFrac : vertical size as a fraction of the hero height
        cyFrac     : vertical center (negative = lower — "from below")
        tube       : strand thickness in world units */
     const HELIX_CFG = {
-      spanFrac:   0.96,               // full hero width — the title sits ON TOP
-      cxFrac:     0,                  // centered, not shoved aside
-      heightFrac: isMobile ? 0.5 : 0.62,
-      cyFrac:     -0.10,              // center pushed DOWN: helix lives low,
-      tube:       isMobile ? 1.2  : 1.6, // strands rise up behind the text
+      spanFrac:   isMobile ? 0.92 : 0.60, // matches the reference length
+      cxFrac:     isMobile ? 0    : 0.22, // pushed right; left tail hides in text
+      heightFrac: isMobile ? 0.52 : 0.64,
+      cyFrac:     -0.05,                  // sits a touch low, forms from below
+      tube:       isMobile ? 1.2  : 1.6,
     };
     const HELIX_TUBE = HELIX_CFG.tube;
 
