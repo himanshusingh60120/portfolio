@@ -61,10 +61,13 @@ function initField() {
        ★★ HELIX TUNING — these four numbers are the ones to touch ★★
        HELIX_LENGTH  : how far it stretches across the screen (bigger = longer)
        HELIX_HEIGHT  : total vertical size — set to run parallel to the title
+       HELIX_CENTER_X: moves it left/right (positive = toward the right edge,
+                       so it lives beside the title instead of behind it)
        HELIX_CENTER_Y: moves it up/down (0 = vertical middle of the hero)
        HELIX_TUBE    : strand thickness (bigger = chunkier, meatier strands) */
-    const HELIX_LENGTH   = isMobile ? 64 : 96;
+    const HELIX_LENGTH   = isMobile ? 40 : 52;
     const HELIX_HEIGHT   = isMobile ? 18 : 26;
+    const HELIX_CENTER_X = isMobile ? 0 : 27;
     const HELIX_CENTER_Y = 0;
     const HELIX_TUBE     = isMobile ? 1.2 : 1.6;
 
@@ -77,9 +80,10 @@ function initField() {
       oz: new Float32Array(COUNT),
       span: HELIX_LENGTH,
       radius: HELIX_HEIGHT / 2,
+      cx: HELIX_CENTER_X,
       cy: HELIX_CENTER_Y,
-      turns: isMobile ? 3.5 : 5.5,
-      rungs: isMobile ? 26 : 42,
+      turns: isMobile ? 2.5 : 3.5,   // fewer turns: same pitch on the shorter span
+      rungs: isMobile ? 18 : 26,
     };
     for (let i = 0; i < COUNT; i++) {
       const r = Math.random();
@@ -273,6 +277,7 @@ canvas.addEventListener('webglcontextrestored', () => {
   resize();
   three.mat.uniforms.uAtlas.value.needsUpdate = true; // re-upload texture
   three.intro = prefersReduced ? 1 : 0;               // swarm back in
+  resetToScatter(); // land in the chaos cloud, never straight into the helix
 });
 
 /* 2. bfcache restore: opening the link again can resurrect the page from
@@ -285,7 +290,17 @@ window.addEventListener('pageshow', (e) => {
   // park everything back on the shell so the swarm-in is visible again
   three.positions.set(prefersReduced ? three.chaos : three.introFrom);
   three.geo.attributes.position.needsUpdate = true;
+  resetToScatter(); // replayed intro must land in chaos, not the helix
 });
+
+/* Snap the mode back to MANUAL so a replayed entrance always swarms
+   into the scattered digits first. The helix instantly forming on a
+   revisit was a bug: the demo/toggle state survived the page restore. */
+function resetToScatter() {
+  if (three) { three.mix = 0; three.target = 0; }
+  // setMode is hoisted; guard in case the toggle markup ever changes
+  if (typeof setMode === 'function') setMode(false);
+}
 
 window.addEventListener('pointermove', (e) => {
   if (!three) return;
@@ -325,7 +340,7 @@ function animate() {
     const sway = Math.sin(T.t * 0.8) * 1.6 * drift; // slow vertical breathing
     for (let i = 0; i < T.COUNT; i++) {
       const s = H.s[i], j = i * 3;
-      const x = (s - 0.5) * H.span + H.ox[i];
+      const x = (s - 0.5) * H.span + H.cx + H.ox[i];
       const a = s * H.turns * TAU + spin;
       if (H.role[i] === 2) {
         // base-pair rung: bridge between the two backbones
@@ -416,12 +431,23 @@ window.addEventListener('keydown', (e) => {
   setMode(toggle.getAttribute('aria-checked') !== 'true');
 });
 
-// auto-demo: if the visitor hasn't flipped it, flip it for them.
-// automating the automation switch felt thematically required.
+// auto-demo: if the visitor hasn't flipped it, flip it for them —
+// and keep cycling. Helix forms, holds, then the digits scatter BACK
+// into the chaos cloud, then reform. Any manual input stops the demo.
 let touched = false;
 toggle.addEventListener('click', () => (touched = true), { once: true });
+
+const DEMO_FIRST = 7000;  // ms before the first flip to AUTO
+const DEMO_HOLD  = 9000;  // ms the helix stays formed
+const DEMO_REST  = 8000;  // ms the digits stay scattered before reforming
+
+function demoLoop(auto) {
+  if (touched || prefersReduced) return;
+  setMode(auto);
+  setTimeout(() => demoLoop(!auto), auto ? DEMO_HOLD : DEMO_REST);
+}
 if (!prefersReduced) {
-  setTimeout(() => { if (!touched) setMode(true); }, 7000);
+  setTimeout(() => { if (!touched) demoLoop(true); }, DEMO_FIRST);
 }
 
 /* ──────────────────────────────────────────────
