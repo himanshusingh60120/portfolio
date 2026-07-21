@@ -55,21 +55,25 @@ function initField() {
       chaos[i * 3 + 2] = (Math.random() - 0.5) * 40;
     }
 
-    /* ORDER: a DNA double helix spanning the screen, computed live
-       each frame so it spins + flows in from the sides.
+    /* ORDER: a DNA double helix on the RIGHT side of the hero, computed
+       live each frame so it spins + flows.
 
-       ★★ HELIX TUNING — these four numbers are the ones to touch ★★
-       HELIX_LENGTH  : how far it stretches across the screen (bigger = longer)
-       HELIX_HEIGHT  : total vertical size — set to run parallel to the title
-       HELIX_CENTER_X: moves it left/right (positive = toward the right edge,
-                       so it lives beside the title instead of behind it)
-       HELIX_CENTER_Y: moves it up/down (0 = vertical middle of the hero)
-       HELIX_TUBE    : strand thickness (bigger = chunkier, meatier strands) */
-    const HELIX_LENGTH   = isMobile ? 40 : 52;
-    const HELIX_HEIGHT   = isMobile ? 18 : 26;
-    const HELIX_CENTER_X = isMobile ? 0 : 27;
-    const HELIX_CENTER_Y = 0;
-    const HELIX_TUBE     = isMobile ? 1.2 : 1.6;
+       ★★ HELIX TUNING ★★
+       Sizes are FRACTIONS of the visible hero area (computed from the
+       camera frustum in resize()), so the helix lands in the same spot
+       on every screen instead of guessing world units.
+       spanFrac   : width of the helix as a fraction of the hero width
+       cxFrac     : horizontal center (0 = middle, 0.25 = right side)
+       heightFrac : vertical size as a fraction of the hero height —
+                    0.72 leaves clean margins above and below
+       tube       : strand thickness in world units */
+    const HELIX_CFG = {
+      spanFrac:   isMobile ? 0.9  : 0.46,
+      cxFrac:     isMobile ? 0    : 0.26,
+      heightFrac: 0.72,
+      tube:       isMobile ? 1.2  : 1.6,
+    };
+    const HELIX_TUBE = HELIX_CFG.tube;
 
     const helix = {
       s: new Float32Array(COUNT),      // 0..1 position along the strand
@@ -78,11 +82,13 @@ function initField() {
       ox: new Float32Array(COUNT),     // fixed thickness offsets (the "tube")
       oy: new Float32Array(COUNT),
       oz: new Float32Array(COUNT),
-      span: HELIX_LENGTH,
-      radius: HELIX_HEIGHT / 2,
-      cx: HELIX_CENTER_X,
-      cy: HELIX_CENTER_Y,
-      turns: isMobile ? 2.5 : 3.5,   // fewer turns: same pitch on the shorter span
+      cfg: HELIX_CFG,
+      span: 50,        // real values written by resize() from the frustum
+      radius: 13,
+      rz: 8,           // depth radius, kept flatter so perspective doesn't
+      cx: 0,           // bulge particles outside the band
+      cy: 0,
+      turns: isMobile ? 2.5 : 3.5,
       rungs: isMobile ? 18 : 26,
     };
     for (let i = 0; i < COUNT; i++) {
@@ -264,6 +270,17 @@ function resize() {
   three.mat.uniforms.uScale.value = h * 0.5 * Math.min(window.devicePixelRatio, 2);
   three.camera.aspect = w / h;
   three.camera.updateProjectionMatrix();
+
+  /* size the helix off the ACTUAL visible area at z = 0, so it always
+     sits in the same on-screen band regardless of viewport shape */
+  const dist = three.camera.position.z;
+  const visH = 2 * dist * Math.tan((three.camera.fov * Math.PI) / 360);
+  const visW = visH * three.camera.aspect;
+  const H = three.helix, C = H.cfg;
+  H.span   = visW * C.spanFrac;
+  H.cx     = visW * C.cxFrac;
+  H.radius = (visH * C.heightFrac) / 2;
+  H.rz     = H.radius * 0.55; // flatter in depth → no perspective overspill
 }
 window.addEventListener('resize', resize);
 
@@ -337,7 +354,7 @@ function animate() {
   if (m > 0.004) {
     const H = T.helix, TAU = Math.PI * 2;
     const spin = T.t * (drift ? 2.2 : 0);          // screw rotation = sideways flow
-    const sway = Math.sin(T.t * 0.8) * 1.6 * drift; // slow vertical breathing
+    const sway = Math.sin(T.t * 0.8) * 0.8 * drift; // gentle vertical breathing
     for (let i = 0; i < T.COUNT; i++) {
       const s = H.s[i], j = i * 3;
       const x = (s - 0.5) * H.span + H.cx + H.ox[i];
@@ -347,12 +364,12 @@ function animate() {
         const k = 1 - 2 * H.f[i];
         or[j]     = x;
         or[j + 1] = Math.cos(a) * H.radius * k + H.cy + H.oy[i] + sway;
-        or[j + 2] = Math.sin(a) * H.radius * k + H.oz[i];
+        or[j + 2] = Math.sin(a) * H.rz * k + H.oz[i];
       } else {
         const ph = H.role[i] === 0 ? 0 : Math.PI;
         or[j]     = x;
         or[j + 1] = Math.cos(a + ph) * H.radius + H.cy + H.oy[i] + sway;
-        or[j + 2] = Math.sin(a + ph) * H.radius + H.oz[i];
+        or[j + 2] = Math.sin(a + ph) * H.rz + H.oz[i];
       }
     }
   }
