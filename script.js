@@ -45,7 +45,7 @@ function initField() {
     camera.position.set(0, 4, 46);
 
     const isMobile = window.innerWidth < 700;
-    const COUNT = isMobile ? 3600 : 7500;
+    const COUNT = isMobile ? 3800 : 9500;
 
     /* CHAOS: scattered noise cloud (the manual world) */
     const chaos = new Float32Array(COUNT * 3);
@@ -55,30 +55,29 @@ function initField() {
       chaos[i * 3 + 2] = (Math.random() - 0.5) * 40;
     }
 
-    /* ORDER: a DNA double helix occupying the RIGHT portion of the hero,
-       at the length shown in the reference. Its LEFT tail tucks behind the
-       title (text layers on top), so the strand's pinch-point "waist" is
-       hidden under the text instead of leaving an empty gap beside it. The
-       dense body of the helix sits clear to the right. It forms by rising
-       from below. Computed live each frame.
+    /* ORDER: a DNA double helix spanning the FULL hero width, edge to edge,
+       no gaps. Its VERTICAL band is bound at runtime to the real DOM: the
+       top sits just BELOW the eyebrow line ("Himanshu Singh · …") and the
+       bottom sits just ABOVE the intro paragraph ("Business analyst by …"),
+       so neither line of text ever overlaps the strands. The title layers
+       on top of the left portion. Forms by rising from below. Live each frame.
 
        ★★ HELIX TUNING ★★
-       Sizes are FRACTIONS of the visible hero area (computed from the
-       camera frustum in resize()), so the helix lands in the same spot
-       on every screen instead of guessing world units.
-       spanFrac   : width of the helix as a fraction of the hero width
-       cxFrac     : horizontal center (0 = middle, + = toward right edge).
-                    Keep the LEFT edge (cxFrac - spanFrac/2) slightly
-                    negative so the tail stays behind the text = no gap.
-       heightFrac : vertical size as a fraction of the hero height
-       cyFrac     : vertical center (negative = lower — "from below")
-       tube       : strand thickness in world units */
+       spanFrac  : width as a fraction of the hero width (>1 overshoots the
+                   screen edges so the ends never leave a gap)
+       cxFrac    : horizontal center (0 = middle)
+       topPad/botPad : px breathing room below the eyebrow / above the intro
+       Vertical size + center are computed from the DOM in resize(); the
+       *Frac fallbacks below are only used if that measurement isn't ready. */
     const HELIX_CFG = {
-      spanFrac:   isMobile ? 0.92 : 0.60, // matches the reference length
-      cxFrac:     isMobile ? 0    : 0.22, // pushed right; left tail hides in text
-      heightFrac: isMobile ? 0.52 : 0.64,
-      cyFrac:     -0.05,                  // sits a touch low, forms from below
-      tube:       isMobile ? 1.2  : 1.6,
+      spanFrac: 1.08,
+      cxFrac:   0,
+      topPad:   14,
+      botPad:   14,
+      // fallbacks (used only before the first DOM measurement lands)
+      heightFrac: 0.6,
+      cyFrac:     0,
+      tube: isMobile ? 1.2 : 1.6,
     };
     const HELIX_TUBE = HELIX_CFG.tube;
 
@@ -95,8 +94,8 @@ function initField() {
       rz: 8,           // depth radius, kept flatter so perspective doesn't
       cx: 0,           // bulge particles outside the band
       cy: 0,
-      turns: isMobile ? 2.5 : 3.5,
-      rungs: isMobile ? 18 : 26,
+      turns: isMobile ? 4.5 : 8.5,
+      rungs: isMobile ? 26 : 52,
     };
     for (let i = 0; i < COUNT; i++) {
       const r = Math.random();
@@ -260,6 +259,10 @@ function initField() {
       rumble: 0, // fed by the throttle, because why not
       introFrom,
       intro: prefersReduced ? 1 : 0, // 0 → off-screen shell, 1 → settled
+      // auto-demo clock (frame-driven, so it can't get stuck like timers can)
+      demoT: 0,        // seconds elapsed in the demo cycle
+      demoAuto: false, // last mode the demo asked for
+      last: 0,         // performance.now() of previous frame
     };
 
     resize();
@@ -284,11 +287,37 @@ function resize() {
   const visH = 2 * dist * Math.tan((three.camera.fov * Math.PI) / 360);
   const visW = visH * three.camera.aspect;
   const H = three.helix, C = H.cfg;
-  H.span   = visW * C.spanFrac;
-  H.cx     = visW * C.cxFrac;
-  H.cy     = visH * C.cyFrac;                // negative = sits below center
-  H.radius = (visH * C.heightFrac) / 2;
-  H.rz     = H.radius * 0.55; // flatter in depth → no perspective overspill
+  H.span = visW * C.spanFrac;
+  H.cx   = visW * C.cxFrac;
+
+  /* Vertical band from the ACTUAL text boxes: top edge drops just below the
+     eyebrow, bottom edge stops just above the intro paragraph, so neither
+     line of copy overlaps the strands. Measured in px relative to the hero
+     (the canvas fills it), then mapped into world Y. */
+  const heroEl = document.getElementById('hero');
+  const ebEl   = document.querySelector('.eyebrow');
+  const subEl  = document.querySelector('.hero-sub');
+  let mapped = false;
+  if (heroEl && ebEl && subEl) {
+    const hr = heroEl.getBoundingClientRect();
+    const er = ebEl.getBoundingClientRect();
+    const sr = subEl.getBoundingClientRect();
+    const topPx = (er.bottom - hr.top) + C.topPad;   // below the eyebrow
+    const botPx = (sr.top    - hr.top) - C.botPad;   // above the intro copy
+    if (botPx - topPx > 40) {                         // sane band → use it
+      const yTop = (0.5 - topPx / hr.height) * visH;  // px(top-down) → world(up)
+      const yBot = (0.5 - botPx / hr.height) * visH;
+      H.cy     = (yTop + yBot) / 2;
+      H.radius = Math.abs(yTop - yBot) / 2;
+      H.rz     = H.radius * 0.5;
+      mapped = true;
+    }
+  }
+  if (!mapped) {                                       // fallback: fractions
+    H.cy     = visH * C.cyFrac;
+    H.radius = (visH * C.heightFrac) / 2;
+    H.rz     = H.radius * 0.5;
+  }
 }
 window.addEventListener('resize', resize);
 
@@ -322,7 +351,10 @@ window.addEventListener('pageshow', (e) => {
    into the scattered digits first. The helix instantly forming on a
    revisit was a bug: the demo/toggle state survived the page restore. */
 function resetToScatter() {
-  if (three) { three.mix = 0; three.target = 0; }
+  if (three) {
+    three.mix = 0; three.target = 0;
+    three.demoT = 0; three.demoAuto = false; // restart the auto-demo cycle
+  }
   // setMode is hoisted; guard in case the toggle markup ever changes
   if (typeof setMode === 'function') setMode(false);
 }
@@ -343,6 +375,26 @@ function animate() {
   requestAnimationFrame(animate);
   if (!three) return;
   const T = three;
+
+  /* real elapsed time, clamped so a backgrounded tab can't jump the clock */
+  const now = performance.now();
+  const dt = T.last ? Math.min(0.05, (now - T.last) / 1000) : 0.016;
+  T.last = now;
+
+  /* ── AUTO-DEMO as a state machine ──────────────────────────────
+     Every frame we recompute which mode the demo *should* be in from a
+     single clock. There's no setTimeout chain to drop, so it can never
+     get stuck "loaded but not coming back": if a frame is missed the next
+     one just reads the clock and corrects. Stops the instant the user
+     interacts (touched), and respects reduced-motion. */
+  if (!touched && !prefersReduced) {
+    T.demoT += dt;
+    const REST = 6.5, HOLD = 9.0;          // seconds scattered / seconds helix
+    const phase = T.demoT % (REST + HOLD);
+    const wantAuto = phase >= REST;
+    if (wantAuto !== T.demoAuto) { T.demoAuto = wantAuto; setMode(wantAuto); }
+  }
+
   T.t += 0.004;
 
   T.mix += (T.target - T.mix) * 0.035;
@@ -459,24 +511,13 @@ window.addEventListener('keydown', (e) => {
   setMode(toggle.getAttribute('aria-checked') !== 'true');
 });
 
-// auto-demo: if the visitor hasn't flipped it, flip it for them —
-// and keep cycling. Helix forms, holds, then the digits scatter BACK
-// into the chaos cloud, then reform. Any manual input stops the demo.
+// auto-demo: if the visitor never flips the switch, the field cycles itself
+// (scattered digits → helix → back to digits, forever) via the frame-driven
+// state machine in animate(). Any manual interaction sets `touched` and the
+// demo bows out, leaving the visitor's choice in place.
 let touched = false;
-toggle.addEventListener('click', () => (touched = true), { once: true });
-
-const DEMO_FIRST = 7000;  // ms before the first flip to AUTO
-const DEMO_HOLD  = 9000;  // ms the helix stays formed
-const DEMO_REST  = 8000;  // ms the digits stay scattered before reforming
-
-function demoLoop(auto) {
-  if (touched || prefersReduced) return;
-  setMode(auto);
-  setTimeout(() => demoLoop(!auto), auto ? DEMO_HOLD : DEMO_REST);
-}
-if (!prefersReduced) {
-  setTimeout(() => { if (!touched) demoLoop(true); }, DEMO_FIRST);
-}
+function stopDemo() { touched = true; }
+toggle.addEventListener('click', stopDemo, { once: true });
 
 /* ──────────────────────────────────────────────
    2 · SCRAMBLE DECODE (dirty data → clean text)
