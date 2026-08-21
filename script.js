@@ -572,12 +572,12 @@ window.addEventListener('pointermove', (e) => {
 ────────────────────────────────────────────── */
 const consoleBody = document.getElementById('consoleBody');
 const LINES = [
-  '▸ reading prospect sheet…',
-  '▸ screening company news…',
-  '▸ embedding 3,000+ reports…',
-  '▸ GPT reranking matches…',
-  '▸ writing 4 emails → sheet',
-  '✓ cadence complete. next lead.',
+  '▸ agent online. reading prospect sheet…',
+  '▸ screening for trigger events…',
+  '▸ retrieving across 3,000+ docs…',
+  '▸ reranking shortlist…',
+  '▸ eval passed. writing 4-touch cadence…',
+  '✓ shipped to sheet. next lead.',
 ];
 
 if (consoleBody && !prefersReduced) {
@@ -738,10 +738,10 @@ if (clockEl) {
 (() => {
   const EXCUSES = [
     "This one's internal — it's wired into live company data, and my employer has a strong preference for that data staying employed here too. You get the blueprint above; the keys stay in the building.",
-    "Still locked. The tool runs against a real prospect database with real people's emails in it. Opening that to the internet is how you end up in a compliance meeting with no snacks.",
+    "Still locked. It runs against a real prospect database with real people's emails in it. Opening that to the internet is how you end up in a compliance meeting with no snacks.",
     "I admire the persistence. It genuinely exists and genuinely runs — every weekday, on production data. That's exactly why it can't be a public demo. The pipeline diagram above is the guided tour.",
-    "Okay, real talk: the API keys alone would make this demo the most expensive free product on the internet. Read the write-up, then ask me about it — I'll happily walk through the architecture on a call.",
-    "You've clicked this five times. I respect that. It's still internal. But this level of QA instinct is exactly what these tools are built to reward — my contact section is right at the bottom.",
+    "Okay, real talk: the API bill alone would make this the most expensive free product on the internet. Read the write-up, then ask me about it — I'll walk you through the tradeoffs, the eval set, and the two decisions I'd make differently.",
+    "You've clicked this five times. I respect that — that's the exact instinct I hire for and build for. It's still internal. But the contact section is right at the bottom, and I'm significantly easier to unlock than this card.",
   ];
 
   document.querySelectorAll('.project-locked').forEach((card) => {
