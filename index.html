@@ -135,11 +135,13 @@
             <b>The problem:</b> sales researched every prospect by hand. Dig for news,
             guess which of 3,000+ reports fits, write four emails, repeat. It ate the
             better part of an hour per lead, and quality fell off a cliff after lunch.
+<br/><br/>
             <b>What I shipped:</b> an agent that takes a sheet of company names and
             returns a finished four-touch cadence. It screens for a real trigger event
             (funding, expansion, a merger, fresh regulation) so every email opens with
             something that actually happened this quarter, then retrieves and reranks
             the report catalog to attach the one asset that earns a reply.
+<br/><br/>
             <b>The call I made:</b> the sheet stays the interface. I could have built a
             clean dashboard nobody logs into. Instead the output lands in the tool the
             team already lives in, so adoption cost was zero and training was one Slack
@@ -168,16 +170,19 @@
           <p class="project-body">
             <b>The problem:</b> purchased B2B lists rot in two directions at once. The
             report matched to the lead is usually wrong, and the lead usually does not
-            work there anymore. <b>The architecture decision:</b> two-stage retrieval.
+            work there anymore.<br/><br/>
+            <b>The architecture decision:</b> two-stage retrieval.
             Embeddings do the cheap, fast shortlist across the full catalog, then the
             LLM reranks only the survivors. Single-stage LLM matching would have been
             marginally more accurate and roughly an order of magnitude more expensive
             per lead, which at our volume is the difference between a tool that ships
-            and a line item someone kills in Q3. <b>The failure mode nobody specced:</b>
+            and a line item someone kills in Q3.<br/><br/>
+            <b>The failure mode nobody specced:</b>
             stale employment. An email about someone's <i>old</i> employer's industry is
             worse than no email, so the tool confirms the lead is still there before it
             trusts the match, and silently rematches under the new company when they are
-            not. <b>How I knew it worked:</b> a fixed set of hard, hand-labelled leads I
+            not.<br/><br/>
+            <b>How I knew it worked:</b> a fixed set of hard, hand-labelled leads I
             rerun before every change, so "the new prompt feels better" never made it to
             production on vibes alone. Every row that comes out has a reason to exist
             that survives a pipeline review.
@@ -205,10 +210,12 @@
             <b>The problem:</b> a formatting miss went live after four people read the
             page and all four read past it. Casing, a double space, a growth rate that
             did not survive arithmetic. Invisible in a CMS field, embarrassing on a
-            published report. <b>What I shipped:</b> paste a live URL. It runs 66
+            published report.<br/><br/>
+            <b>What I shipped:</b> paste a live URL. It runs 66
             checklist rows over the parsed page, requests every link and image,
             recomputes the CAGR instead of reading it, compares the page against the last
             four published reports, and writes a Yes or No row to the master sheet.
+<br/><br/>
             <b>The call that matters:</b> three of those rows genuinely need a model,
             because spelling and tone are not regex problems. So the model is never
             trusted, only verified. It has to quote the exact span it objects to, the
@@ -242,16 +249,19 @@
             <b>The problem:</b> a site crawl flags thousands of issues, and a good chunk
             of them are already fixed, wrong, or unreachable. Teams burn the first week of
             an audit arguing with the spreadsheet instead of fixing the site.
+<br/><br/>
             <b>What I shipped:</b> upload a crawl export, 24 rules detect every derivable
             issue, then every flagged URL is re-fetched from the live site before it is
             allowed into the report. Each one comes back CONFIRMED with a source-code
             snippet, RESOLVED because someone already fixed it, or UNVERIFIABLE with the
             reason. Nothing is silently dropped. Survivors get impact-scored against
             Search Console traffic and exported as XLSX, a Jira-ready CSV, or a redirect
-            map. <b>The call I made:</b> parsing runs in the browser and the client owns
+            map.<br/><br/>
+            <b>The call I made:</b> parsing runs in the browser and the client owns
             the verification queue. A 50,000 URL export never leaves the machine, no
             serverless timeout can kill a long run, and a dropped batch marks its items
-            unverifiable instead of dying. <b>The part I am proud of:</b> a fix only
+            unverifiable instead of dying.<br/><br/>
+            <b>The part I am proud of:</b> a fix only
             becomes Fixed-Verified when the live source proves it. Claiming it is not
             evidence.
           </p>
@@ -277,14 +287,17 @@
           <p class="project-body">
             <b>The problem:</b> "why does that page outrank ours" was being answered with
             instinct and the phrase "content is king", which is not a roadmap.
+<br/><br/>
             <b>What I shipped:</b> point it at a URL. It finds the page each of four rival
             research firms ranks with for the same intent, tears both down at source level,
             and scores the gap across 13 weighted factors: content depth, schema, internal
             links, E-E-A-T, outbound citations, AI-Overview coverage, freshness and the
-            rest. <b>The call I made:</b> every factor carries an explicit weight, and that
+            rest.<br/><br/>
+            <b>The call I made:</b> every factor carries an explicit weight, and that
             is the whole product. A weight can be argued with in a meeting and tuned when
             it is wrong. A gut feeling can only be agreed with or ignored. So the output is
             not a diagnosis, it is a prioritized backlog, biggest scoring gap first.
+<br/><br/>
             <b>The detail nobody asks about until it burns them:</b> link counts cover the
             article body only. Nav, sidebar and footer links are stripped out and counted
             separately, because a rival with 400 menu links is not beating you on internal
@@ -313,13 +326,16 @@
             <b>The problem:</b> internal linking is the task everyone agrees matters and
             nobody does. It means rereading the entire library, remembering what exists,
             and finding anchor text that does not read like a robot wrote it. Every single
-            time you publish. <b>What I shipped:</b> a tool that reads the content library,
+            time you publish.<br/><br/>
+            <b>What I shipped:</b> a tool that reads the content library,
             works out what each piece is genuinely about, and proposes contextual
             placements. Real anchor text inside real sentences, pointing at the
-            actually-related piece. <b>The call I made:</b> it suggests, it never
+            actually-related piece.<br/><br/>
+            <b>The call I made:</b> it suggests, it never
             publishes. Auto-inserting links into live pages is a fast way to teach an
             editorial team to distrust your tool forever, and trust is the only feature
             that matters twice. A human approves in seconds and the tool keeps its job.
+<br/><br/>
             <b>The unglamorous part:</b> strict frontend and backend split, serverless on
             Vercel, API key server-side in environment config, because "we leaked the key"
             is a rough way to open a standup. Running against a production content library,
