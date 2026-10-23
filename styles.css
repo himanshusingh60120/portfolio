@@ -2,7 +2,6 @@
    HIMANSHU SINGH · living ledger · v2
    paper #F2F1E9 · ink #12140D · pine #175E3B · lime #CFF25E
 ────────────────────────────────────────────────────────── */
-
 :root{
   --paper:#F2F1E9;
   --ink:#12140D;
@@ -18,7 +17,6 @@
 
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-
 body{
   background:var(--paper);
   color:var(--ink);
@@ -31,7 +29,6 @@ body{
     linear-gradient(90deg, var(--rule-soft) 1px, transparent 1px);
   background-size:32px 32px;
 }
-
 .mono{font-family:var(--mono)}
 ::selection{background:var(--lime);color:var(--ink)}
 a{color:inherit;text-decoration:none}
@@ -41,7 +38,6 @@ kbd{
   border:1px solid var(--pine);padding:0 .35em;
   border-bottom-width:2px;background:var(--paper);
 }
-
 :focus-visible{outline:3px solid var(--pine);outline-offset:3px}
 
 /* ── cell cursor ─────────────────────────────────────── */
@@ -102,7 +98,6 @@ body.has-pointer .cell-cursor{opacity:1}
 }
 #field{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hero-inner{position:relative;z-index:2;max-width:1100px}
-
 .eyebrow{
   font-size:12px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--pine);margin-bottom:22px;
@@ -118,8 +113,8 @@ body.has-pointer .cell-cursor{opacity:1}
 .hero-title em{
   font-style:normal;color:var(--paper);
   background:var(--ink);
-  display:inline-block;            /* box height follows its own line-height… */
-  line-height:1.04;                /* …so the card hugs the letters */
+  display:inline-block;       /* box height follows its own line-height… */
+  line-height:1.04;           /* …so the card hugs the letters */
   padding:0 .1em;
   vertical-align:baseline;
   box-shadow:.09em .09em 0 var(--lime);
@@ -248,7 +243,6 @@ body.has-pointer .cell-cursor{opacity:1}
 }
 .project:hover::before{transform:scaleX(1)}
 .project > *{position:relative;z-index:1}
-
 .row-no{
   font-size:13px;color:var(--pine);letter-spacing:.1em;
   border:1px solid var(--rule);align-self:start;
@@ -264,6 +258,24 @@ body.has-pointer .cell-cursor{opacity:1}
 }
 .project-body{max-width:660px;margin-top:12px;font-size:15.5px}
 
+/* ── beats: the card reads itself one step at a time ── */
+.beats{
+  display:grid;              /* every beat sits in the same cell, so the box never jumps */
+  max-width:660px;margin-top:14px;
+  cursor:pointer;
+}
+.beat{
+  grid-area:1/1;
+  font-size:15.5px;
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:opacity .35s ease, transform .35s ease, visibility 0s linear .35s;
+}
+.beat.on{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.beat-label{
+  display:block;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--pine);margin-bottom:6px;
+}
+
 .pipeline{
   display:flex;flex-wrap:wrap;gap:8px;align-items:center;
   margin-top:20px;font-size:10.5px;letter-spacing:.1em;
@@ -271,13 +283,21 @@ body.has-pointer .cell-cursor{opacity:1}
 }
 .pipe-step{
   border:1px solid var(--ink);padding:5px 9px;background:var(--paper);
-  transition:background .2s,color .2s;
+  position:relative;cursor:pointer;
+  transition:background .25s,color .25s;
 }
 .pipe-step.out{background:var(--ink);color:var(--lime)}
 .pipe-arrow{color:var(--pine)}
-.project:hover .pipe-step{background:var(--ink);color:var(--paper)}
-.project:hover .pipe-step.out{background:var(--pine);color:var(--lime)}
-.project:hover .pipe-step{transition-delay:calc(var(--i,0)*60ms)}
+/* the lit box is the one being read: boxes invert one after another */
+.pipe-step.lit{background:var(--ink);color:var(--paper)}
+.pipe-step.out.lit{background:var(--pine);color:var(--lime)}
+.pipe-step::after{
+  content:"";position:absolute;left:0;bottom:-1px;height:2px;width:0;
+  background:var(--lime);
+}
+.pipe-step.lit::after{animation:beatbar var(--beat-ms,4200ms) linear forwards}
+@keyframes beatbar{from{width:0}to{width:100%}}
+.pipe-step:hover{background:var(--ink);color:var(--paper)}
 
 /* packet dot travelling the pipeline on hover */
 .packet{
@@ -296,7 +316,6 @@ body.has-pointer .cell-cursor{opacity:1}
   92%{opacity:1}
   100%{left:100%;opacity:0}
 }
-
 .project-cta{
   align-self:center;justify-self:end;
   font-size:12px;letter-spacing:.14em;
@@ -307,7 +326,6 @@ body.has-pointer .cell-cursor{opacity:1}
 .project:hover .project-cta{background:var(--ink);color:var(--lime)}
 .arrow{display:inline-block;transition:transform .25s}
 .project:hover .arrow,.contact-link:hover .arrow,.garage-card:hover .arrow{transform:translate(3px,-3px)}
-
 @media (max-width:900px){
   .project{grid-template-columns:1fr;gap:14px}
   .row-no{width:60px}
@@ -459,6 +477,9 @@ a.garage-card:hover .speedline{opacity:1}
   .reveal{opacity:1;transform:none}
   .ticker-track{transform:none}
   .bike-card.redline{animation:none !important}
+  /* no autoplay: show all four beats stacked, like a normal paragraph */
+  .beats{display:block;cursor:default}
+  .beat{grid-area:auto;opacity:1;visibility:visible;transform:none;margin-bottom:12px}
 }
 
 /* locked project note */
