@@ -767,3 +767,54 @@ if (clockEl) {
     });
   });
 })();
+
+
+/* ───────────────────────────────────────────────
+   8 · BEATS · each project card reads itself
+   Append this block to the END of script.js (after the LOCKED PROJECTS block).
+   The pipeline boxes invert one after another; the beat of text under the
+   lit box is the one on screen. Hover a box to pin it, click to jump,
+   tap the text (mobile) to advance. Reduced motion: all beats shown, no clock.
+─────────────────────────────────────────────── */
+(() => {
+  const BEAT_MS = 4200;
+  document.querySelectorAll('.project').forEach((card) => {
+    const steps = [...card.querySelectorAll('.pipe-step')];
+    const beats = [...card.querySelectorAll('.beat')];
+    if (!steps.length || !beats.length) return;
+    card.style.setProperty('--beat-ms', `${BEAT_MS}ms`);
+
+    if (prefersReduced) {
+      beats.forEach((b) => b.classList.add('on'));
+      return;
+    }
+
+    let idx = 0, timer = null, pinned = false;
+    const show = (i) => {
+      idx = (i + steps.length) % steps.length;
+      steps.forEach((s, k) => {
+        s.classList.remove('lit');
+        if (k === idx) { void s.offsetWidth; s.classList.add('lit'); } // restart the progress bar
+      });
+      const b = Math.min(idx, beats.length - 1);
+      beats.forEach((p, k) => p.classList.toggle('on', k === b));
+    };
+    const start = () => { if (!timer) timer = setInterval(() => { if (!pinned) show(idx + 1); }, BEAT_MS); };
+    const stop = () => { clearInterval(timer); timer = null; };
+
+    steps.forEach((s, k) => {
+      s.addEventListener('mouseenter', () => { pinned = true; show(k); });
+      s.addEventListener('mouseleave', () => { pinned = false; });
+      s.addEventListener('click', (e) => { e.stopPropagation(); show(k); });
+    });
+    // tap the text to advance (phones have no hover); it does not open the locked note
+    card.querySelector('.beats')?.addEventListener('click', (e) => { e.stopPropagation(); show(idx + 1); });
+
+    // only tick while the card is actually on screen
+    new IntersectionObserver((entries) => {
+      entries.forEach((en) => (en.isIntersecting ? start() : stop()));
+    }, { threshold: 0.3 }).observe(card);
+
+    show(0);
+  });
+})();
