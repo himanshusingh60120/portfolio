@@ -121,7 +121,7 @@
   <section class="work" id="work">
     <div class="section-head">
       <h2 class="section-title"><span>SELECTED</span> <span>WORK</span></h2>
-      <p class="section-note mono">05 products · discovery → prototype → production, owned end to end · the code belongs to my employer, so you get the blueprint and not the keys</p>
+      <p class="section-note mono">05 products · each card reads itself in four beats · hover a step to pause, click to jump</p>
     </div>
 
     <!-- 01 · AuditForge -->
@@ -131,32 +131,30 @@
         <div class="project-tags mono">SITEMAP CRAWLER · LIVE GOOGLE SHEET · DAILY RECHECK · SEARCH CONSOLE + GA4</div>
         <h3 class="project-title">AUDITFORGE</h3>
         <p class="project-hook">The audit that clocks in every morning.</p>
-        <p class="project-body">
-          <b>The problem:</b> the SEO sends the audit, then everyone goes quiet. Three
-          weeks later I am asking "so what's actually been fixed?" and getting a shrug.
-          The audit was the deliverable. The fix never was.
-          <b>What I shipped:</b> give it a sitemap and it crawls every URL plus every
-          link, image and script those pages point to, into a Google Sheet that fills
-          up while it runs. 118,008 pages, 480,986 findings, one laptop, one night.
-          Every row has a proof link that opens the live page and scrolls to the exact
-          text. It also writes the correction: the page a broken URL should redirect
-          to, the heading outline a page should have ("Change H4 → H3"), rolled into
-          one fix list, page by page, biggest Google traffic first.
-          <b>The part I am proud of:</b> it does not stop at the report. Every morning
-          at 6 it rechecks every finding on the live site, done or still open, and
-          emails me. Delete a row from the sheet and that finding stops being chased:
-          the team's edits are the spec. Search Console and GA4 are wired in, so every
-          fixed page is measured before vs after against pages not fixed yet. A control
-          group, not a dashboard. At 14, 30 and 90 days an impact report emails itself.
-          <b>What it taught me:</b> LinkedIn answers crawlers with 404 while the page
-          works fine; a tool that calls that broken is lying to you. And the hardest
-          bugs were Windows file handles and Wi-Fi dropping at 4am. Production is the
-          part after the demo.
-        </p>
+
+        <div class="beats" aria-live="polite">
+          <p class="beat"><span class="beat-label">01 · the problem</span>
+            The SEO sends the audit, then everyone goes quiet. Three weeks later I'm asking
+            "what's actually been fixed?" and getting a shrug. The audit was the deliverable.
+            The fix never was.</p>
+          <p class="beat"><span class="beat-label">02 · what I shipped</span>
+            Give it a sitemap. It crawls every URL and everything they point to into a live
+            Google Sheet: 118,008 pages, one laptop, one night. Every row has a proof link
+            that scrolls to the exact text, and the correction next to it: the redirect, the
+            heading it should be, page by page.</p>
+          <p class="beat"><span class="beat-label">03 · the follow-through</span>
+            Every morning at 6 it rechecks every finding on the live site and emails me:
+            done, or still open. Delete a row from the sheet and that finding stops being
+            chased. The team's edits are the spec. No ticket to me.</p>
+          <p class="beat"><span class="beat-label">04 · did it matter?</span>
+            Search Console and GA4 wired in: every fixed page, before vs after, against
+            pages not fixed yet. A control group, not a dashboard. At 14, 30 and 90 days an
+            impact report emails itself. Which fixes paid off. Which were theatre.</p>
+        </div>
+
         <div class="pipeline mono" aria-hidden="true">
           <span class="pipe-step">SITEMAP</span><span class="pipe-arrow">→</span>
-          <span class="pipe-step">CRAWL EVERYTHING</span><span class="pipe-arrow">→</span>
-          <span class="pipe-step">WRITE THE FIX</span><span class="pipe-arrow">→</span>
+          <span class="pipe-step">CRAWL + WRITE THE FIX</span><span class="pipe-arrow">→</span>
           <span class="pipe-step">RECHECK DAILY</span><span class="pipe-arrow">→</span>
           <span class="pipe-step out">DID IT MATTER? ✓</span>
           <span class="packet" aria-hidden="true"></span>
@@ -172,32 +170,31 @@
         <div class="project-tags mono">LLM WRITER · FACT GUARD · APPROVAL GATE · COST CAP · SMARTLEAD REPORTING</div>
         <h3 class="project-title">CADENCE</h3>
         <p class="project-hook">Four emails per prospect. Zero that a machine let through unchecked.</p>
-        <p class="project-body">
-          <b>The problem:</b> sales researched every prospect by hand and wrote four
-          emails each. An hour per lead, quality falling off a cliff after lunch, and
-          the occasional email congratulating someone on a funding round that belonged
-          to a different company.
-          <b>What I shipped:</b> a sheet of company names goes in; a finished four-touch
-          cadence comes out. It finds a real news trigger from this quarter, frames the
-          decision the prospect is actually facing, and writes to that. Then the part
-          that earns its keep: every email passes a rules check, a fact guard that
-          ignores our own framing and flags only real claims, a sampled second judge,
-          and an approval gate that is the only thing allowed to mark a row Ready. A
-          bad sentence gets rebuilt and the row re-runs every check; a wrong company,
-          a stale story or a duplicate contact gets held, never repaired.
-          <b>The call I made:</b> a hard cost cap of $0.90 per 1,000 prospects. As the
-          run approaches it, the expensive steps switch off in order of how much they
-          matter. The fact guard never switches off. No row is Ready unchecked, ever.
-          <b>The reporting:</b> a scoreboard that pulls sent, opens, replies and bounces
-          per campaign from Smartlead at 7am daily and redeploys itself. No server, no
-          database, the API key never leaves GitHub Secrets. 7,200 prospects in the
-          last run. Sales woke up to it finished and took the credit. I have made my
-          peace with that.
-        </p>
+
+        <div class="beats" aria-live="polite">
+          <p class="beat"><span class="beat-label">01 · the problem</span>
+            Sales researched every prospect by hand and wrote four emails each. An hour per
+            lead, quality off a cliff after lunch, and the occasional congratulations on a
+            funding round that belonged to someone else.</p>
+          <p class="beat"><span class="beat-label">02 · what I shipped</span>
+            A sheet of company names in, a finished four-touch cadence out. It finds a real
+            news trigger from this quarter, frames the decision the prospect is actually
+            facing, and writes to that. 7,200 prospects in the last run.</p>
+          <p class="beat"><span class="beat-label">03 · the gate</span>
+            Every email passes a rules check, a fact guard that ignores our own framing and
+            flags only real claims, a sampled second judge, and an approval gate, the only
+            thing allowed to mark a row Ready. A bad sentence gets rebuilt and re-checked. A
+            wrong company gets held, never repaired.</p>
+          <p class="beat"><span class="beat-label">04 · the call · the scoreboard</span>
+            Hard cap: $0.90 per 1,000 prospects. Near the cap, the expensive steps switch off
+            in order; the fact guard never does. Reporting is a Smartlead scoreboard that
+            pulls sent, opens and replies at 7am and redeploys itself. No server, no
+            database. Sales takes the credit. I have made my peace with that.</p>
+        </div>
+
         <div class="pipeline mono" aria-hidden="true">
           <span class="pipe-step">SHEET</span><span class="pipe-arrow">→</span>
-          <span class="pipe-step">NEWS + DECISION</span><span class="pipe-arrow">→</span>
-          <span class="pipe-step">WRITE 4 EMAILS</span><span class="pipe-arrow">→</span>
+          <span class="pipe-step">NEWS + DECISION → 4 EMAILS</span><span class="pipe-arrow">→</span>
           <span class="pipe-step">FACT GUARD + GATE</span><span class="pipe-arrow">→</span>
           <span class="pipe-step out">READY · SCOREBOARD ✓</span>
           <span class="packet" aria-hidden="true"></span>
@@ -213,30 +210,32 @@
         <div class="project-tags mono">VERIFIED AI OUTPUT · 66 CHECKS · SHEETS API · NEXT.JS</div>
         <h3 class="project-title">REDLINE</h3>
         <p class="project-hook">The QA pass that is not allowed to make things up.</p>
-        <p class="project-body">
-          <b>The problem:</b> a formatting miss went live after four people read the
-          page and all four read past it. Casing, a double space, a growth rate that
-          did not survive arithmetic. Invisible in a CMS field, embarrassing on a
-          published report.
-          <b>What I shipped:</b> paste a live URL. It runs 66 checklist rows over the
-          parsed page, requests every link and image, recomputes the CAGR instead of
-          reading it, compares the page against the last four published reports, and
-          writes a Yes or No row to the master sheet.
-          <b>The call that matters:</b> three of those rows genuinely need a model,
-          because spelling and tone are not regex problems. So the model is never
-          trusted, only verified. It has to quote the exact span it objects to, the
-          server confirms that span appears in the page source character for character,
-          and the fix must be a minimal edit of what it quoted. An early build passed
-          a finding that quoted a real sentence and invented a typo inside it, so now
-          anything failing a guard is discarded, counted, and shown in the run summary.
-          Drift is visible instead of silent. With no API key set, those rows read
-          "Not run" rather than guessing. Live and in use.
-        </p>
+
+        <div class="beats" aria-live="polite">
+          <p class="beat"><span class="beat-label">01 · the problem</span>
+            A formatting miss went live after four people read the page and all four read
+            past it. Casing, a double space, a growth rate that did not survive arithmetic.
+            Invisible in a CMS field, embarrassing on a published report.</p>
+          <p class="beat"><span class="beat-label">02 · what I shipped</span>
+            Paste a live URL. It runs 66 checklist rows over the parsed page, requests every
+            link and image, recomputes the CAGR instead of reading it, compares against the
+            last four published reports, and writes a Yes or No row to the master sheet.</p>
+          <p class="beat"><span class="beat-label">03 · the call</span>
+            Three rows genuinely need a model; spelling and tone are not regex problems. So
+            the model is never trusted, only verified: it must quote the exact span, the
+            server confirms that span exists character for character, and the fix must be a
+            minimal edit of the quote.</p>
+          <p class="beat"><span class="beat-label">04 · the proof</span>
+            An early build quoted a real sentence and invented a typo inside it. Now anything
+            failing a guard is discarded, counted, and shown in the run summary. Drift is
+            visible instead of silent. No API key? Those rows read "Not run", not a guess.
+            Live and in use.</p>
+        </div>
+
         <div class="pipeline mono" aria-hidden="true">
           <span class="pipe-step">LIVE URL</span><span class="pipe-arrow">→</span>
           <span class="pipe-step">66 RULES</span><span class="pipe-arrow">→</span>
           <span class="pipe-step">AI, THEN VERIFIED</span><span class="pipe-arrow">→</span>
-          <span class="pipe-step">BASELINE DIFF</span><span class="pipe-arrow">→</span>
           <span class="pipe-step out">YES / NO TO SHEET ✓</span>
           <span class="packet" aria-hidden="true"></span>
         </div>
@@ -251,27 +250,28 @@
         <div class="project-tags mono">SOURCE-LEVEL TEARDOWN · 13 WEIGHTED FACTORS · SEARCH CONSOLE OAUTH · HREFLANG REPORT</div>
         <h3 class="project-title">X-RAY</h3>
         <p class="project-hook">Turns "why are we losing?" into a ranked to-do list.</p>
-        <p class="project-body">
-          <b>The problem:</b> "why does that page outrank ours" was being answered with
-          instinct and the phrase "content is king", which is not a roadmap.
-          <b>What I shipped:</b> point it at a URL. It finds the page each of four rival
-          research firms ranks with for the same intent, tears both down at source
-          level, and scores the gap across 13 weighted factors: content depth, schema,
-          in-content links, authorship and E-E-A-T, outbound citations, FAQ and
-          AI-Overview coverage, freshness, down to image alt text. Lists every link
-          inside the report body verbatim, with the chrome links counted separately,
-          because a rival with 400 menu links is not beating you on internal linking.
-          <b>The call I made:</b> every factor carries an explicit weight, and that is
-          the whole product. A weight can be argued with in a meeting and tuned when it
-          is wrong. A gut feeling can only be agreed with or ignored. So the output is
-          not a diagnosis, it is a prioritized backlog, biggest scoring gap first.
-          <b>The extras nobody asked for until they needed them:</b> Search Console
-          OAuth adds live rank, CTR, impressions and clicks to every row; bulk mode runs
-          a whole CSV; a weekly hreflang report shows clicks per language sitemap per
-          week, so "is Japan growing?" is a filter, not a project. Rival sites answer
-          crawlers with 403; those get marked blocked, not failed, and the rest of the
-          verdict still lands.
-        </p>
+
+        <div class="beats" aria-live="polite">
+          <p class="beat"><span class="beat-label">01 · the problem</span>
+            "Why does that page outrank ours?" was being answered with instinct and the
+            phrase "content is king", which is not a roadmap.</p>
+          <p class="beat"><span class="beat-label">02 · what I shipped</span>
+            Point it at a URL. It finds the page each of four rival research firms ranks with
+            for the same intent, tears both down at source level, and scores the gap across
+            13 factors: depth, schema, in-content links, E-E-A-T, citations, AI-Overview
+            coverage, down to image alt text.</p>
+          <p class="beat"><span class="beat-label">03 · the call</span>
+            Every factor carries an explicit weight, and that is the whole product. A weight
+            can be argued with in a meeting and tuned when it's wrong; a gut feeling can only
+            be agreed with or ignored. Body links are counted apart from the menu, because 400
+            nav links is not internal linking.</p>
+          <p class="beat"><span class="beat-label">04 · the backlog</span>
+            Not a diagnosis, a to-do list, biggest gap first. Search Console OAuth adds live
+            rank, CTR and clicks to every row; bulk mode runs a whole CSV; a weekly hreflang
+            report makes "is Japan growing?" a filter, not a project. Rivals that 403 the
+            crawler get marked blocked, not failed.</p>
+        </div>
+
         <div class="pipeline mono" aria-hidden="true">
           <span class="pipe-step">YOUR URL</span><span class="pipe-arrow">→</span>
           <span class="pipe-step">FIND RIVAL PAGES</span><span class="pipe-arrow">→</span>
@@ -290,32 +290,33 @@
         <div class="project-tags mono">NEXT.JS · SEARCH CONSOLE + GA4 · URL INSPECTION API · NO DATABASE</div>
         <h3 class="project-title">PULSE</h3>
         <p class="project-hook">Every property, one screen, refreshed before anyone asks.</p>
-        <p class="project-body">
-          <b>The problem:</b> "how are we doing?" was answered with six browser tabs, a
-          screenshot and a number that was already three days old by the time it hit
-          Slack.
-          <b>What I shipped:</b> one read-only dashboard for every Search Console and
-          GA4 property the account can see. Clicks, impressions, CTR and position with
-          the change against the previous period; pages in positions 1–10, 11–20,
-          21–30; pages that dropped five places or vanished; queries one nudge away
-          from page one; branded share; users on the site right now, by country and
-          city. Every table filters, sorts and exports. It pairs each Search Console
-          site to its GA4 property by domain, and remembers if you correct it.
-          <b>The call I made:</b> Google does not expose the indexing report through
-          its API, so I rebuilt it. Sitemap URLs plus every page with impressions count
-          as indexed for free; the remainder go through the URL Inspection quota of
-          about 2,000 checks a day, resumable, cached in the browser. Slow, honest, and
-          the first time anyone here could see the not-indexed list without clicking
-          through Search Console one property at a time.
-          <b>The detail that bit me:</b> Search Console lags three days, so every range
-          ends three days ago. Otherwise every Monday looks like a traffic crash.
-          Tokens stay server-side, sign-in is an allowlist, and it refreshes itself
-          every five minutes so "any update?" gets answered by a URL.
-        </p>
+
+        <div class="beats" aria-live="polite">
+          <p class="beat"><span class="beat-label">01 · the problem</span>
+            "How are we doing?" was answered with six browser tabs, a screenshot, and a
+            number already three days old by the time it hit Slack.</p>
+          <p class="beat"><span class="beat-label">02 · what I shipped</span>
+            One read-only screen for every Search Console and GA4 property the account can
+            see: clicks, impressions, CTR, position with the change vs last period; pages in
+            positions 1–10, 11–20, 21–30; pages that dropped five places or vanished;
+            queries one nudge from page one; users on the site right now.</p>
+          <p class="beat"><span class="beat-label">03 · the call</span>
+            Google does not expose the indexing report through its API, so I rebuilt it.
+            Sitemap URLs plus every page with impressions count as indexed for free; the rest
+            go through the URL Inspection quota, 2,000 a day, resumable, cached in the
+            browser. Slow, honest, and the first time anyone here could see the not-indexed
+            list.</p>
+          <p class="beat"><span class="beat-label">04 · the detail that bit me</span>
+            Search Console lags three days, so every range ends three days ago, or every
+            Monday looks like a traffic crash. Tokens stay server-side, sign-in is an
+            allowlist, and it refreshes every five minutes so "any update?" gets answered
+            with a URL.</p>
+        </div>
+
         <div class="pipeline mono" aria-hidden="true">
           <span class="pipe-step">GOOGLE SIGN-IN</span><span class="pipe-arrow">→</span>
           <span class="pipe-step">SEARCH CONSOLE + GA4</span><span class="pipe-arrow">→</span>
-          <span class="pipe-step">BANDS · DROPS · INDEXING</span><span class="pipe-arrow">→</span>
+          <span class="pipe-step">INDEXING, REBUILT</span><span class="pipe-arrow">→</span>
           <span class="pipe-step out">ONE SCREEN ✓</span>
           <span class="packet" aria-hidden="true"></span>
         </div>
