@@ -199,6 +199,25 @@ body.has-pointer .cell-cursor{opacity:1}
 .stat{background:var(--paper);padding:26px 24px;border-top:2px solid var(--ink)}
 .stat-num{display:block;font-size:clamp(36px,4.6vw,58px);font-weight:500;color:var(--pine);line-height:1}
 .stat-label{display:block;margin-top:10px;font-size:13px;max-width:28ch}
+
+/* receipt: hover a number to see where it comes from */
+.stat{cursor:default}
+.stat-text{display:grid;margin-top:10px}
+.stat-text > *{grid-area:1/1;transition:opacity .3s ease,transform .3s ease}
+.stat-text .stat-label{margin-top:0}
+.stat-receipt{
+  display:block;font-size:11px;letter-spacing:.1em;line-height:1.7;
+  color:var(--ink);background:var(--lime);padding:6px 8px;
+  max-width:28ch;align-self:start;
+  opacity:0;transform:translateY(6px);pointer-events:none;
+}
+.stat:hover .stat-label,.stat:focus-visible .stat-label{opacity:0;transform:translateY(-6px)}
+.stat:hover .stat-receipt,.stat:focus-visible .stat-receipt{opacity:1;transform:none}
+@media (hover:none){
+  .stat-text{display:block}
+  .stat-receipt{opacity:1;transform:none;margin-top:10px}
+}
+
 .live-cells{color:var(--ink)}
 .live-cells::after{
   content:"";display:inline-block;width:.5em;height:.9em;
@@ -466,6 +485,9 @@ a.garage-card:hover .speedline{opacity:1}
   /* no autoplay: show all four beats stacked, like a normal paragraph */
   .beats{display:block;cursor:default}
   .beat{grid-area:auto;opacity:1;visibility:visible;transform:none;margin-bottom:12px}
+  /* receipts always visible, no swap */
+  .stat-text{display:block}
+  .stat-receipt{opacity:1;transform:none;margin-top:10px}
 }
 
 /* locked project note */
