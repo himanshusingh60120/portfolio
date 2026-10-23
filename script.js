@@ -7,10 +7,10 @@
    5. Formula bar skill audit
    6. Hold-to-rev throttle + tachometer
    7. Live "cells auto-filled" stat · counters · reveals · clock
+   8. Beats · each project card reads itself
 ══════════════════════════════════════════════════════════ */
 
 let THREE = null;
-
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Load three.js without letting a CDN hiccup kill the whole script.
@@ -39,7 +39,6 @@ function initField() {
   try {
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 400);
     camera.position.set(0, 4, 46);
@@ -50,7 +49,7 @@ function initField() {
     /* CHAOS: scattered noise cloud (the manual world) */
     const chaos = new Float32Array(COUNT * 3);
     for (let i = 0; i < COUNT; i++) {
-      chaos[i * 3]     = (Math.random() - 0.5) * 90;
+      chaos[i * 3] = (Math.random() - 0.5) * 90;
       chaos[i * 3 + 1] = (Math.random() - 0.5) * 46;
       chaos[i * 3 + 2] = (Math.random() - 0.5) * 40;
     }
@@ -63,20 +62,20 @@ function initField() {
        on top of the left portion. Forms by rising from below. Live each frame.
 
        ★★ HELIX TUNING ★★
-       spanFrac  : width as a fraction of the hero width (>1 overshoots the
-                   screen edges so the ends never leave a gap)
-       cxFrac    : horizontal center (0 = middle)
+       spanFrac      : width as a fraction of the hero width (>1 overshoots the
+                       screen edges so the ends never leave a gap)
+       cxFrac        : horizontal center (0 = middle)
        topPad/botPad : px breathing room below the eyebrow / above the intro
        Vertical size + center are computed from the DOM in resize(); the
        *Frac fallbacks below are only used if that measurement isn't ready. */
     const HELIX_CFG = {
       spanFrac: 1.08,
-      cxFrac:   0,
-      topPad:   14,
-      botPad:   14,
+      cxFrac: 0,
+      topPad: 14,
+      botPad: 14,
       // fallbacks (used only before the first DOM measurement lands)
       heightFrac: 0.6,
-      cyFrac:     0,
+      cyFrac: 0,
       tube: isMobile ? 1.2 : 1.6,
     };
     const HELIX_TUBE = HELIX_CFG.tube;
@@ -89,23 +88,23 @@ function initField() {
       oy: new Float32Array(COUNT),
       oz: new Float32Array(COUNT),
       cfg: HELIX_CFG,
-      span: 50,        // real values written by resize() from the frustum
+      span: 50,          // real values written by resize() from the frustum
       radius: 13,
-      rz: 8,           // depth radius, kept flatter so perspective doesn't
-      cx: 0,           // bulge particles outside the band
+      rz: 8,             // depth radius, kept flatter so perspective doesn't
+      cx: 0,             // bulge particles outside the band
       cy: 0,
       turns: isMobile ? 4.5 : 8.5,
       rungs: isMobile ? 26 : 52,
     };
     for (let i = 0; i < COUNT; i++) {
       const r = Math.random();
-      if (r < 0.4) {                   // strand A
+      if (r < 0.4) {             // strand A
         helix.role[i] = 0;
         helix.s[i] = Math.random();
-      } else if (r < 0.8) {            // strand B
+      } else if (r < 0.8) {      // strand B
         helix.role[i] = 1;
         helix.s[i] = Math.random();
-      } else {                         // rung: snap to a discrete base pair
+      } else {                   // rung: snap to a discrete base pair
         helix.role[i] = 2;
         helix.s[i] = ((Math.random() * helix.rungs) | 0) / helix.rungs + 0.5 / helix.rungs;
         helix.f[i] = Math.random();
@@ -120,7 +119,7 @@ function initField() {
 
     /* colors: ink dots with a scatter of pine + lime */
     const colors = new Float32Array(COUNT * 3);
-    const cInk  = new THREE.Color('#12140D');
+    const cInk = new THREE.Color('#12140D');
     const cPine = new THREE.Color('#175E3B');
     const cLime = new THREE.Color('#9DBE2E');
     for (let i = 0; i < COUNT; i++) {
@@ -136,7 +135,7 @@ function initField() {
       const th = Math.random() * Math.PI * 2;
       const ph = Math.acos(2 * Math.random() - 1);
       const rad = 120 + Math.random() * 80;
-      introFrom[i * 3]     = Math.sin(ph) * Math.cos(th) * rad;
+      introFrom[i * 3] = Math.sin(ph) * Math.cos(th) * rad;
       introFrom[i * 3 + 1] = Math.sin(ph) * Math.sin(th) * rad * 0.6;
       introFrom[i * 3 + 2] = Math.cos(ph) * rad * 0.5;
     }
@@ -172,14 +171,12 @@ function initField() {
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       for (let d = 0; d < 10; d++) ctx.fillText(String(d), d * 64 + 32, 36);
     }
-
     function hasInk(ctx) {
       // sample the strip; if fillText silently painted nothing, alpha is all 0
       const px = ctx.getImageData(0, 16, 640, 32).data;
       for (let i = 3; i < px.length; i += 64) if (px[i] > 32) return true;
       return false;
     }
-
     function tryDrawAtlas(font) {
       try {
         renderDigits(sctx, font);
@@ -216,7 +213,7 @@ function initField() {
       depthWrite: false,
       uniforms: {
         uAtlas: { value: atlas },
-        uSize:  { value: isMobile ? 0.85 : 1.0 },   // digit size — bigger = more legible
+        uSize: { value: isMobile ? 0.85 : 1.0 },   // digit size — bigger = more legible
         uScale: { value: 300 },
         uOpacity: { value: 0.85 },
       },
@@ -245,7 +242,6 @@ function initField() {
           gl_FragColor = vec4(vColor, a * uOpacity);
         }`,
     });
-
     scene.add(new THREE.Points(geo, mat));
 
     three = {
@@ -256,15 +252,14 @@ function initField() {
       raycaster: new THREE.Raycaster(),
       plane: new THREE.Plane(new THREE.Vector3(0, 0, 1), 0),
       t: 0,
-      rumble: 0, // fed by the throttle, because why not
+      rumble: 0,                              // fed by the throttle, because why not
       introFrom,
-      intro: prefersReduced ? 1 : 0, // 0 → off-screen shell, 1 → settled
+      intro: prefersReduced ? 1 : 0,          // 0 → off-screen shell, 1 → settled
       // auto-demo clock (frame-driven, so it can't get stuck like timers can)
-      demoT: 0,        // seconds elapsed in the demo cycle
-      demoAuto: false, // last mode the demo asked for
-      last: 0,         // performance.now() of previous frame
+      demoT: 0,            // seconds elapsed in the demo cycle
+      demoAuto: false,     // last mode the demo asked for
+      last: 0,             // performance.now() of previous frame
     };
-
     resize();
     animate();
   } catch (e) {
@@ -275,7 +270,7 @@ function initField() {
 function resize() {
   if (!three) return;
   const w = canvas.clientWidth, h = canvas.clientHeight;
-  if (!w || !h) { requestAnimationFrame(resize); return; } // layout not ready yet
+  if (!w || !h) { requestAnimationFrame(resize); return; }  // layout not ready yet
   three.renderer.setSize(w, h, false);
   three.mat.uniforms.uScale.value = h * 0.5 * Math.min(window.devicePixelRatio, 2);
   three.camera.aspect = w / h;
@@ -288,35 +283,35 @@ function resize() {
   const visW = visH * three.camera.aspect;
   const H = three.helix, C = H.cfg;
   H.span = visW * C.spanFrac;
-  H.cx   = visW * C.cxFrac;
+  H.cx = visW * C.cxFrac;
 
   /* Vertical band from the ACTUAL text boxes: top edge drops just below the
      eyebrow, bottom edge stops just above the intro paragraph, so neither
      line of copy overlaps the strands. Measured in px relative to the hero
      (the canvas fills it), then mapped into world Y. */
   const heroEl = document.getElementById('hero');
-  const ebEl   = document.querySelector('.eyebrow');
-  const subEl  = document.querySelector('.hero-sub');
+  const ebEl = document.querySelector('.eyebrow');
+  const subEl = document.querySelector('.hero-sub');
   let mapped = false;
   if (heroEl && ebEl && subEl) {
     const hr = heroEl.getBoundingClientRect();
     const er = ebEl.getBoundingClientRect();
     const sr = subEl.getBoundingClientRect();
     const topPx = (er.bottom - hr.top) + C.topPad;   // below the eyebrow
-    const botPx = (sr.top    - hr.top) - C.botPad;   // above the intro copy
-    if (botPx - topPx > 40) {                         // sane band → use it
-      const yTop = (0.5 - topPx / hr.height) * visH;  // px(top-down) → world(up)
+    const botPx = (sr.top - hr.top) - C.botPad;      // above the intro copy
+    if (botPx - topPx > 40) {                        // sane band → use it
+      const yTop = (0.5 - topPx / hr.height) * visH; // px(top-down) → world(up)
       const yBot = (0.5 - botPx / hr.height) * visH;
-      H.cy     = (yTop + yBot) / 2;
+      H.cy = (yTop + yBot) / 2;
       H.radius = Math.abs(yTop - yBot) / 2;
-      H.rz     = H.radius * 0.5;
+      H.rz = H.radius * 0.5;
       mapped = true;
     }
   }
-  if (!mapped) {                                       // fallback: fractions
-    H.cy     = visH * C.cyFrac;
+  if (!mapped) {                                     // fallback: fractions
+    H.cy = visH * C.cyFrac;
     H.radius = (visH * C.heightFrac) / 2;
-    H.rz     = H.radius * 0.5;
+    H.rz = H.radius * 0.5;
   }
 }
 window.addEventListener('resize', resize);
@@ -329,9 +324,9 @@ canvas.addEventListener('webglcontextlost', (e) => e.preventDefault());
 canvas.addEventListener('webglcontextrestored', () => {
   if (!three) return;
   resize();
-  three.mat.uniforms.uAtlas.value.needsUpdate = true; // re-upload texture
-  three.intro = prefersReduced ? 1 : 0;               // swarm back in
-  resetToScatter(); // land in the chaos cloud, never straight into the helix
+  three.mat.uniforms.uAtlas.value.needsUpdate = true;   // re-upload texture
+  three.intro = prefersReduced ? 1 : 0;                 // swarm back in
+  resetToScatter();   // land in the chaos cloud, never straight into the helix
 });
 
 /* 2. bfcache restore: opening the link again can resurrect the page from
@@ -344,7 +339,7 @@ window.addEventListener('pageshow', (e) => {
   // park everything back on the shell so the swarm-in is visible again
   three.positions.set(prefersReduced ? three.chaos : three.introFrom);
   three.geo.attributes.position.needsUpdate = true;
-  resetToScatter(); // replayed intro must land in chaos, not the helix
+  resetToScatter();   // replayed intro must land in chaos, not the helix
 });
 
 /* Snap the mode back to MANUAL so a replayed entrance always swarms
@@ -353,7 +348,7 @@ window.addEventListener('pageshow', (e) => {
 function resetToScatter() {
   if (three) {
     three.mix = 0; three.target = 0;
-    three.demoT = 0; three.demoAuto = false; // restart the auto-demo cycle
+    three.demoT = 0; three.demoAuto = false;   // restart the auto-demo cycle
   }
   // setMode is hoisted; guard in case the toggle markup ever changes
   if (typeof setMode === 'function') setMode(false);
@@ -389,19 +384,17 @@ function animate() {
      interacts (touched), and respects reduced-motion. */
   if (!touched && !prefersReduced) {
     T.demoT += dt;
-    const REST = 6.5, HOLD = 9.0;          // seconds scattered / seconds helix
+    const REST = 6.5, HOLD = 9.0;              // seconds scattered / seconds helix
     const phase = T.demoT % (REST + HOLD);
     const wantAuto = phase >= REST;
     if (wantAuto !== T.demoAuto) { T.demoAuto = wantAuto; setMode(wantAuto); }
   }
 
   T.t += 0.004;
-
   T.mix += (T.target - T.mix) * 0.035;
   const m = T.mix;
   const drift = prefersReduced ? 0 : 1;
-  const rumble = T.rumble * drift; // extra jitter while the engine revs
-
+  const rumble = T.rumble * drift;             // extra jitter while the engine revs
   const pos = T.positions, ch = T.chaos, or = T.order;
   const mw = T.mouseWorld;
 
@@ -413,8 +406,8 @@ function animate() {
      look like the molecule is flowing in from the sides of the screen */
   if (m > 0.004) {
     const H = T.helix, TAU = Math.PI * 2;
-    const spin = T.t * (drift ? 2.2 : 0);          // screw rotation = sideways flow
-    const sway = Math.sin(T.t * 0.8) * 0.8 * drift; // gentle vertical breathing
+    const spin = T.t * (drift ? 2.2 : 0);            // screw rotation = sideways flow
+    const sway = Math.sin(T.t * 0.8) * 0.8 * drift;  // gentle vertical breathing
     /* the helix FORMS FROM BELOW: while the mix is settling, its target
        is displaced under the hero and slides up into place */
     const rise = (1 - m) * (1 - m) * -(H.radius * 2.6);
@@ -425,12 +418,12 @@ function animate() {
       if (H.role[i] === 2) {
         // base-pair rung: bridge between the two backbones
         const k = 1 - 2 * H.f[i];
-        or[j]     = x;
+        or[j] = x;
         or[j + 1] = Math.cos(a) * H.radius * k + H.cy + H.oy[i] + sway + rise;
         or[j + 2] = Math.sin(a) * H.rz * k + H.oz[i];
       } else {
         const ph = H.role[i] === 0 ? 0 : Math.PI;
-        or[j]     = x;
+        or[j] = x;
         or[j + 1] = Math.cos(a + ph) * H.radius + H.cy + H.oy[i] + sway + rise;
         or[j + 2] = Math.sin(a + ph) * H.rz + H.oz[i];
       }
@@ -439,11 +432,9 @@ function animate() {
 
   for (let i = 0; i < T.COUNT; i++) {
     const ix = i * 3, iy = ix + 1, iz = ix + 2;
-
     const dx = Math.sin(T.t * 3 + i * 0.37) * 1.6 * (1 - m) * drift;
     const dy = Math.cos(T.t * 2.4 + i * 0.51) * 1.6 * (1 - m) * drift;
     const by = Math.sin(T.t * 5 + or[ix] * 0.4) * 0.25 * m * drift;
-
     let tx = ch[ix] * (1 - m) + or[ix] * m + dx;
     let ty = ch[iy] * (1 - m) + or[iy] * m + dy + by;
     let tz = ch[iz] * (1 - m) + or[iz] * m;
@@ -477,7 +468,6 @@ function animate() {
     pos[iy] += (ty - pos[iy]) * 0.08;
     pos[iz] += (tz - pos[iz]) * 0.08;
   }
-
   T.geo.attributes.position.needsUpdate = true;
 
   if (!prefersReduced) {
@@ -525,7 +515,6 @@ toggle.addEventListener('click', stopDemo, { once: true });
 /* letters/digits only — same visual width as the real text,
    so the scrambled state never overflows or looks longer */
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
 function scramble(el, duration = 2400) {
   const target = el.dataset.text;
   const t0 = performance.now();
@@ -537,13 +526,12 @@ function scramble(el, duration = 2400) {
     for (let i = settled; i < target.length; i++) {
       out += target[i] === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
     }
-    out = out.slice(0, target.length); // never exceed the real character count
+    out = out.slice(0, target.length);   // never exceed the real character count
     el.textContent = out;
     if (p < 1) requestAnimationFrame(frame);
     else delete el.dataset.busy;
   })(t0);
 }
-
 const scrambles = document.querySelectorAll('.scramble');
 if (!prefersReduced) {
   scrambles.forEach((el, i) => setTimeout(() => scramble(el), 400 + i * 450));
@@ -579,7 +567,6 @@ const LINES = [
   '▸ eval passed. writing 4-touch cadence…',
   '✓ shipped to sheet. next lead.',
 ];
-
 if (consoleBody && !prefersReduced) {
   let li = 0;
   const maxRows = 5;
@@ -589,7 +576,6 @@ if (consoleBody && !prefersReduced) {
     if (line.startsWith('✓')) el.className = 'done';
     consoleBody.appendChild(el);
     while (consoleBody.children.length > maxRows) consoleBody.removeChild(consoleBody.firstChild);
-
     let ci = 0;
     const iv = setInterval(() => {
       el.textContent = line.slice(0, ++ci);
@@ -663,8 +649,7 @@ if (throttleBtn && needle) {
     // idle flutter so the needle feels alive
     const flutter = rpm > 200 && !prefersReduced ? (Math.random() - 0.5) * 120 : 0;
     const shown = Math.max(0, rpm + flutter);
-
-    const deg = -120 + (shown / MAX) * 240; // needle: -120° at 0, +120° at max
+    const deg = -120 + (shown / MAX) * 240;   // needle: -120° at 0, +120° at max
     needle.style.transform = `rotate(${deg}deg)`;
     rpmText.textContent = `${Math.round(shown).toLocaleString()} RPM${rpm >= REDLINE ? ' · REDLINE' : ''}`;
 
@@ -687,7 +672,6 @@ const io = new IntersectionObserver((entries) => {
     io.unobserve(en.target);
   });
 }, { threshold: 0.18 });
-
 document.querySelectorAll('.reveal, .stat').forEach((el) => io.observe(el));
 
 function runCounter(el) {
@@ -709,7 +693,7 @@ const liveCells = document.getElementById('liveCells');
 if (liveCells) {
   let n = 0;
   (function tick() {
-    n += 1; // one cell at a time — the pipeline is thorough, not frantic
+    n += 1;   // one cell at a time — the pipeline is thorough, not frantic
     liveCells.textContent = n.toLocaleString();
     setTimeout(tick, prefersReduced ? 6000 : 2500 + Math.random() * 3000);
   })();
@@ -756,7 +740,7 @@ if (clockEl) {
       }
       note.textContent = '⌁ ' + EXCUSES[Math.min(clicks, EXCUSES.length - 1)];
       note.classList.remove('pop');
-      void note.offsetWidth;           // restart the animation
+      void note.offsetWidth;   // restart the animation
       note.classList.add('pop');
       clicks++;
     };
@@ -768,16 +752,21 @@ if (clockEl) {
   });
 })();
 
-
 /* ───────────────────────────────────────────────
    8 · BEATS · each project card reads itself
-   Append this block to the END of script.js (after the LOCKED PROJECTS block).
-   The pipeline boxes invert one after another; the beat of text under the
-   lit box is the one on screen. Hover a box to pin it, click to jump,
-   tap the text (mobile) to advance. Reduced motion: all beats shown, no clock.
+   The pipeline boxes invert one after another; the beat of text under
+   the lit box is the one on screen. No "paused" state anywhere: every
+   interaction jumps and re-arms a fresh clock, so it can never stall.
+   · card scrolls into view      → starts from box 1
+   · mouse arrives on the card   → starts from box 1
+   · finger taps the card        → starts from box 1
+   · hover / click a box         → jumps to it, clock restarts
+   · tap the text (mobile)       → next beat
+   · reduced motion              → all beats shown, no clock
 ─────────────────────────────────────────────── */
 (() => {
   const BEAT_MS = 4200;
+
   document.querySelectorAll('.project').forEach((card) => {
     const steps = [...card.querySelectorAll('.pipe-step')];
     const beats = [...card.querySelectorAll('.beat')];
@@ -789,32 +778,58 @@ if (clockEl) {
       return;
     }
 
-    let idx = 0, timer = null, pinned = false;
-    const show = (i) => {
-      idx = (i + steps.length) % steps.length;
+    let idx = 0, timer = null, visible = false;
+
+    const paint = () => {
       steps.forEach((s, k) => {
         s.classList.remove('lit');
-        if (k === idx) { void s.offsetWidth; s.classList.add('lit'); } // restart the progress bar
+        if (k === idx) { void s.offsetWidth; s.classList.add('lit'); }   // restart the bar
       });
       const b = Math.min(idx, beats.length - 1);
       beats.forEach((p, k) => p.classList.toggle('on', k === b));
     };
-    const start = () => { if (!timer) timer = setInterval(() => { if (!pinned) show(idx + 1); }, BEAT_MS); };
-    const stop = () => { clearInterval(timer); timer = null; };
+
+    // one fresh timer per beat; a new arm() always cancels the old one
+    const arm = () => {
+      clearTimeout(timer); timer = null;
+      if (!visible) return;
+      timer = setTimeout(() => {
+        idx = (idx + 1) % steps.length;
+        paint();
+        arm();
+      }, BEAT_MS);
+    };
+
+    const show = (i) => { idx = (i + steps.length) % steps.length; paint(); arm(); };
+    const restart = () => show(0);
 
     steps.forEach((s, k) => {
-      s.addEventListener('mouseenter', () => { pinned = true; show(k); });
-      s.addEventListener('mouseleave', () => { pinned = false; });
+      s.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') show(k); });
       s.addEventListener('click', (e) => { e.stopPropagation(); show(k); });
     });
+
     // tap the text to advance (phones have no hover); it does not open the locked note
     card.querySelector('.beats')?.addEventListener('click', (e) => { e.stopPropagation(); show(idx + 1); });
 
-    // only tick while the card is actually on screen
-    new IntersectionObserver((entries) => {
-      entries.forEach((en) => (en.isIntersecting ? start() : stop()));
-    }, { threshold: 0.3 }).observe(card);
+    // mouse arrives on the card → sequence starts over
+    card.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') restart(); });
 
-    show(0);
+    // finger touches the card (anywhere but a box or the text) → starts over
+    card.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return;
+      if (e.target.closest('.pipe-step, .beats')) return;
+      restart();
+    }, { passive: true });
+
+    // only tick while the card is on screen; every (re)entry starts from box 1
+    new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        visible = en.isIntersecting;
+        if (visible) restart();
+        else { clearTimeout(timer); timer = null; }
+      });
+    }, { threshold: 0.2 }).observe(card);
+
+    paint();   // static first frame until the card scrolls into view
   });
 })();
