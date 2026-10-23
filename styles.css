@@ -299,23 +299,9 @@ body.has-pointer .cell-cursor{opacity:1}
 @keyframes beatbar{from{width:0}to{width:100%}}
 .pipe-step:hover{background:var(--ink);color:var(--paper)}
 
-/* packet dot travelling the pipeline on hover */
-.packet{
-  position:absolute;left:0;top:50%;width:8px;height:8px;
-  background:var(--pine);border-radius:50%;
-  transform:translate(-12px,-50%);opacity:0;
-  pointer-events:none;
-}
-.project:hover .packet{
-  opacity:1;
-  animation:travel 1.4s linear infinite;
-}
-@keyframes travel{
-  0%{left:0;opacity:0}
-  8%{opacity:1}
-  92%{opacity:1}
-  100%{left:100%;opacity:0}
-}
+/* packet dot: retired */
+.packet{display:none}
+
 .project-cta{
   align-self:center;justify-self:end;
   font-size:12px;letter-spacing:.14em;
