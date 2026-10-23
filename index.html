@@ -116,7 +116,7 @@
         <span class="stat-num mono" data-count="7200">0</span>
         <span class="stat-text">
           <span class="stat-label">prospects in one outreach run. Four emails each, every one fact-checked by a machine before a human reads it. The human still reads it.</span>
-          <span class="stat-receipt mono">= × 4 TOUCHES = 28,800 EMAILS · CAPPED AT $0.90 / 1,000</span>
+          <span class="stat-receipt mono">= × 4 TOUCHES = 28,800 EMAILS · 0 SENT UNCHECKED</span>
         </span>
       </div>
       <div class="stat reveal" tabindex="0">
@@ -178,7 +178,7 @@
     <div class="project reveal project-locked" role="button" tabindex="0">
       <div class="row-no mono">02</div>
       <div class="project-main">
-        <div class="project-tags mono">LLM WRITER · FACT GUARD · APPROVAL GATE · COST CAP · SMARTLEAD REPORTING</div>
+        <div class="project-tags mono">LLM WRITER · FACT GUARD · APPROVAL GATE · GRACEFUL DEGRADATION · SMARTLEAD REPORTING</div>
         <h3 class="project-title">CADENCE</h3>
         <p class="project-hook">Four emails per prospect. Zero that a machine let through unchecked.</p>
 
@@ -197,8 +197,10 @@
             thing allowed to mark a row Ready. A bad sentence gets rebuilt and re-checked. A
             wrong company gets held, never repaired.</p>
           <p class="beat"><span class="beat-label">04 · the call · the scoreboard</span>
-            Hard cap: $0.90 per 1,000 prospects. Near the cap, the expensive steps switch off
-            in order; the fact guard never does. Reporting is a Smartlead scoreboard that
+            When a run is under strain, the nice-to-haves switch off in a fixed order:
+            the second judge first, then the news lookup, then the personalisation. The
+            fact guard is last on that list and never actually goes. A plain email is
+            survivable; a wrong one is not. Reporting is a Smartlead scoreboard that
             pulls sent, opens and replies at 7am and redeploys itself. No server, no
             database. Sales takes the credit. I have made my peace with that.</p>
         </div>
@@ -407,7 +409,7 @@
           <span class="chip" tabindex="0" data-fx='=AGENT(workflow) → does the job at 3am, never mentions it'>LLM Agents</span>
           <span class="chip" tabindex="0" data-fx='=QUOTE(exact_span) → the model proves it, or it is discarded'>Hallucination Guards</span>
           <span class="chip" tabindex="0" data-fx='=SCORE(fixed_test_set) → ship on evidence, not on vibes'>Evals & QA</span>
-          <span class="chip" tabindex="0" data-fx='=CAP($0.90 / 1000) → the expensive steps know when to stop'>Cost Control</span>
+          <span class="chip" tabindex="0" data-fx='=DEGRADE(in_order) → the nice-to-haves go first, the fact guard never'>Graceful Degradation</span>
         </div>
         <div class="sheet-row"><span class="sheet-key">B</span>
           <span class="chip" tabindex="0" data-fx='=ASK("what do you dread doing on Friday?") → the actual roadmap'>Product Discovery</span>
