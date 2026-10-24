@@ -8,6 +8,7 @@
    6. Hold-to-rev throttle + tachometer
    7. Live "cells auto-filled" stat · counters · reveals · clock
    8. Beats · each project card reads itself
+   9. Receipts · tap a number to flip it (touch screens)
 ══════════════════════════════════════════════════════════ */
 
 let THREE = null;
@@ -831,5 +832,30 @@ if (clockEl) {
     }, { threshold: 0.2 }).observe(card);
 
     paint();   // static first frame until the card scrolls into view
+  });
+})();
+
+/* ───────────────────────────────────────────────
+   9 · RECEIPTS · tap a number to flip it
+   Desktop flips on hover (pure CSS). Phones have no hover, so a tap
+   toggles .is-flipped instead; one receipt open at a time, tap again
+   to flip back. Reduced motion shows label + receipt together, so
+   there is nothing to flip.
+─────────────────────────────────────────────── */
+(() => {
+  if (prefersReduced) return;
+  const realMouse = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const cards = [...document.querySelectorAll('.stat')]
+    .filter((c) => c.querySelector('.stat-receipt'));
+
+  cards.forEach((card) => {
+    if (!card.hasAttribute('tabindex')) card.tabIndex = 0;   // keyboard: Tab shows it via :focus-visible
+    card.addEventListener('click', (e) => {
+      const isMouse = e.pointerType ? e.pointerType === 'mouse' : realMouse.matches;
+      if (isMouse) return;                                    // desktop keeps pure hover
+      const open = !card.classList.contains('is-flipped');
+      cards.forEach((c) => c.classList.remove('is-flipped'));
+      card.classList.toggle('is-flipped', open);
+    });
   });
 })();
