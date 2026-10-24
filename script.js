@@ -8,7 +8,7 @@
    6. Hold-to-rev throttle + tachometer
    7. Live "cells auto-filled" stat · counters · reveals · clock
    8. Beats · each project card reads itself
-   9. Receipts · tap a number to flip it (touch screens)
+   9. Receipts · hold a number to flip it (touch screens)
 ══════════════════════════════════════════════════════════ */
 
 let THREE = null;
@@ -836,26 +836,53 @@ if (clockEl) {
 })();
 
 /* ───────────────────────────────────────────────
-   9 · RECEIPTS · tap a number to flip it
-   Desktop flips on hover (pure CSS). Phones have no hover, so a tap
-   toggles .is-flipped instead; one receipt open at a time, tap again
-   to flip back. Reduced motion shows label + receipt together, so
-   there is nothing to flip.
+   9 · RECEIPTS · hold a number to flip it
+   Desktop flips on hover (pure CSS). On touch screens the receipt shows
+   for as long as a finger is on the card and flips back the moment it
+   lifts. Built on touch events, not pointer events, on purpose: touch
+   events keep firing while the page scrolls (pointer events get
+   cancelled), so a card stays flipped mid-scroll. If the finger slides
+   onto another card, that one takes over.
+   Reduced motion shows label + receipt together, so nothing to flip.
 ─────────────────────────────────────────────── */
 (() => {
   if (prefersReduced) return;
-  const realMouse = window.matchMedia('(hover: hover) and (pointer: fine)');
   const cards = [...document.querySelectorAll('.stat')]
     .filter((c) => c.querySelector('.stat-receipt'));
+  if (!cards.length) return;
+
+  let current = null, touching = false, raf = 0;
+
+  const flip = (card) => {
+    if (card === current) return;
+    current?.classList.remove('is-flipped');
+    current = card;
+    current?.classList.add('is-flipped');
+  };
 
   cards.forEach((card) => {
     if (!card.hasAttribute('tabindex')) card.tabIndex = 0;   // keyboard: Tab shows it via :focus-visible
-    card.addEventListener('click', (e) => {
-      const isMouse = e.pointerType ? e.pointerType === 'mouse' : realMouse.matches;
-      if (isMouse) return;                                    // desktop keeps pure hover
-      const open = !card.classList.contains('is-flipped');
-      cards.forEach((c) => c.classList.remove('is-flipped'));
-      card.classList.toggle('is-flipped', open);
-    });
+    card.addEventListener('touchstart', () => { touching = true; flip(card); }, { passive: true });
   });
+
+  // finger slides (or the page moves under it) → whichever card is under the finger flips
+  window.addEventListener('touchmove', (e) => {
+    if (!touching) return;
+    const { clientX: x, clientY: y } = e.touches[0];
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const c = document.elementFromPoint(x, y)?.closest('.stat');
+      flip(cards.includes(c) ? c : null);
+    });
+  }, { passive: true });
+
+  // last finger lifted → flip back
+  const release = (e) => {
+    if (e.touches.length) return;
+    touching = false;
+    cancelAnimationFrame(raf);
+    flip(null);
+  };
+  window.addEventListener('touchend', release, { passive: true });
+  window.addEventListener('touchcancel', release, { passive: true });
 })();
