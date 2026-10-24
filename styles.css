@@ -200,8 +200,8 @@ body.has-pointer .cell-cursor{opacity:1}
 .stat-num{display:block;font-size:clamp(36px,4.6vw,58px);font-weight:500;color:var(--pine);line-height:1}
 .stat-label{display:block;margin-top:10px;font-size:13px;max-width:28ch}
 
-/* receipt: hover a number to see where it comes from */
-.stat{cursor:default}
+/* receipt: hover (mouse) or tap (touch) a number to see where it comes from */
+.stat{cursor:default;position:relative}
 .stat-text{display:grid;margin-top:10px}
 .stat-text > *{grid-area:1/1;transition:opacity .3s ease,transform .3s ease}
 .stat-text .stat-label{margin-top:0}
@@ -211,11 +211,24 @@ body.has-pointer .cell-cursor{opacity:1}
   max-width:28ch;align-self:start;
   opacity:0;transform:translateY(6px);pointer-events:none;
 }
-.stat:hover .stat-label,.stat:focus-visible .stat-label{opacity:0;transform:translateY(-6px)}
-.stat:hover .stat-receipt,.stat:focus-visible .stat-receipt{opacity:1;transform:none}
+/* flipped: a tap on touch screens (.is-flipped, set in script.js) or keyboard focus */
+.stat.is-flipped .stat-label,.stat:focus-visible .stat-label{opacity:0;transform:translateY(-6px)}
+.stat.is-flipped .stat-receipt,.stat:focus-visible .stat-receipt{opacity:1;transform:none}
+/* hover flips only with a real mouse. Phones fake a sticky hover on tap,
+   which used to hide the label and leave an empty gap in the card */
+@media (hover:hover) and (pointer:fine){
+  .stat:hover .stat-label{opacity:0;transform:translateY(-6px)}
+  .stat:hover .stat-receipt{opacity:1;transform:none}
+}
+/* touch: receipt stays hidden until tapped, with a hint so visitors know */
 @media (hover:none){
-  .stat-text{display:block}
-  .stat-receipt{opacity:1;transform:none;margin-top:10px}
+  .stat:has(.stat-receipt){cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .stat:has(.stat-receipt)::after{
+    content:"TAP ↻";position:absolute;top:12px;right:14px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+    color:var(--pine);opacity:.7;pointer-events:none;
+  }
+  .stat.is-flipped::after{content:"BACK ↺"}
 }
 
 .live-cells{color:var(--ink)}
@@ -485,9 +498,11 @@ a.garage-card:hover .speedline{opacity:1}
   /* no autoplay: show all four beats stacked, like a normal paragraph */
   .beats{display:block;cursor:default}
   .beat{grid-area:auto;opacity:1;visibility:visible;transform:none;margin-bottom:12px}
-  /* receipts always visible, no swap */
+  /* receipts always visible under the label, no swap and no tap hint */
   .stat-text{display:block}
   .stat-receipt{opacity:1;transform:none;margin-top:10px}
+  .stat-text .stat-label{opacity:1 !important;transform:none !important}
+  .stat:has(.stat-receipt)::after{display:none}
 }
 
 /* locked project note */
